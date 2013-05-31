@@ -1,0 +1,14 @@
+{
+    "name": "rkit/WindowCalculator",
+    "description": "description_text",
+    "minimum-stability": "stable",
+    "authors": [
+        {
+            "name": "rkit",
+            "email": "me@rkit.pp.ru"
+        }
+    ],
+    "require": {
+        "phpexcel/phpexcel": "v1.7.*"
+    }
+}
