@@ -7,8 +7,8 @@
             "name": "rkit",
             "email": "me@rkit.pp.ru"
         }
-    ],
-    "require": {
-        "phpexcel/phpexcel": "v1.7.*"
-    }
+    ]//,
+    //"require": {
+    //    "phpexcel/phpexcel": "v1.7.*"
+    //}
 }

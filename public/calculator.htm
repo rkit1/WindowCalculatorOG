@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
+    <script src="controller.js"></script>
+    <link href="style.css" rel="stylesheet">
+    <title></title>
+</head>
+<body>
+    <div xmlns:ng="http://angularjs.org" id="ng-app" ng-app="Calc">
+        <div ng-controller="CalcController">
+            <table id="windowsList" class="selector">
+                <tr>
+                    <td ng-repeat="window in windows" class="windowSelector">
+                        <button class="windowSelector" ng-click="selectWindow($index)"
+                           ng-disabled="window == currentWindow">
+                            <div>{{window.name}}</div>
+                            <table class="table-bordered">
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td ng-show="currentWindow.panesCount >= 2">&nbsp;</td>
+                                    <td ng-show="currentWindow.panesCount == 3">&nbsp;</td>
+                                </tr>
+                            </table>
+                        </button>
+                    </td>
+                    <td class="windowSelector">
+                        <button ng-click="newWindow()"><i class="icon-plus-sign"></i> Добавить окно</button>
+                    </td>
+                </tr>
+            </table>
+            <hr>
+            <form class="form-inline">
+                <input type="text" ng-model="currentWindow.name">
+                <button><i class=" icon-trash"></i> Удалить окно</button>
+            </form>
+            <table id="paneCountOptions" class="selector">
+                <tr>
+                    <td><a ng-click="currentWindow.setPanesCount(1)"
+                           ng-class="{selected: currentWindow.panesCount==1}">1</a></td>
+                    <td><a ng-click="currentWindow.setPanesCount(2)"
+                           ng-class="{selected: currentWindow.panesCount==2}">2</a></td>
+                    <td><a ng-click="currentWindow.panesCount=3"
+                           ng-class="{selected: currentWindow.panesCount==3}">3</a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

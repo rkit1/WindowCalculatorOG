@@ -1,0 +1,5 @@
+#windowsList {height: 100px;}
+body {margin-left: 5%; margin-right: 5%;}
+td.windowSelector {width: 100px;}
+a {cursor: pointer;}
+.selector a.selected  {color: red;}
