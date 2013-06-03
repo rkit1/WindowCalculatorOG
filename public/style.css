@@ -1,5 +1,15 @@
 #windowsList {height: 100px;}
 body {margin-left: 5%; margin-right: 5%;}
-td.windowSelector {width: 100px;}
+td.windowSelector {width: 120px;}
+td.windowSelector button {width: 110px;}
 a {cursor: pointer;}
 .selector a.selected  {color: red;}
+
+table.windowImage
+{
+    width: 70px;
+    height: 50px;
+    background-color:lightblue;
+    border: 1px solid black;
+}
+table.windowImage td { border: 1px solid black; }

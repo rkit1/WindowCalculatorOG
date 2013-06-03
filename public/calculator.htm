@@ -5,6 +5,7 @@
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
     <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-cookies.min.js"></script>
     <script src="controller.js"></script>
     <link href="style.css" rel="stylesheet">
     <title></title>
@@ -12,17 +13,24 @@
 <body>
     <div xmlns:ng="http://angularjs.org" id="ng-app" ng-app="Calc">
         <div ng-controller="CalcController">
+            <button style="position: absolute; top: 20px; right: 5%;"
+                    ng-click="reset()"><i class="icon-trash"></i> Сбросить калькулятор</button>
             <table id="windowsList" class="selector">
                 <tr>
                     <td ng-repeat="window in windows" class="windowSelector">
                         <button class="windowSelector" ng-click="selectWindow($index)"
                            ng-disabled="window == currentWindow">
-                            <div>{{window.name}}</div>
-                            <table class="table-bordered">
+                            <!--<div>{{window.name}}</div>-->
+                            <table class="windowImage">
                                 <tr>
                                     <td>&nbsp;</td>
-                                    <td ng-show="currentWindow.panesCount >= 2">&nbsp;</td>
-                                    <td ng-show="currentWindow.panesCount == 3">&nbsp;</td>
+                                    <td ng-show="window.type == '2p' || window.type == '3p'">&nbsp;</td>
+                                    <td ng-show="window.type == '3p'">&nbsp;</td>
+                                </tr>
+                                <tr style="background-color: white;" ng-show="window.type == 'door'">
+                                    <td>&nbsp</td>
+                                    <td ng-show="window.type == '2p' || window.type == '3p'">&nbsp;</td>
+                                    <td ng-show="window.type == '3p'">&nbsp;</td>
                                 </tr>
                             </table>
                         </button>
@@ -34,19 +42,61 @@
             </table>
             <hr>
             <form class="form-inline">
-                <input type="text" ng-model="currentWindow.name">
-                <button><i class=" icon-trash"></i> Удалить окно</button>
+                <!--<input type="text" ng-model="currentWindow.name">-->
+                <!--<button ng-click="removeWindow(currentWindow)"><i class="icon-trash"></i> Удалить окно</button>-->
             </form>
-            <table id="paneCountOptions" class="selector">
-                <tr>
-                    <td><a ng-click="currentWindow.setPanesCount(1)"
-                           ng-class="{selected: currentWindow.panesCount==1}">1</a></td>
-                    <td><a ng-click="currentWindow.setPanesCount(2)"
-                           ng-class="{selected: currentWindow.panesCount==2}">2</a></td>
-                    <td><a ng-click="currentWindow.panesCount=3"
-                           ng-class="{selected: currentWindow.panesCount==3}">3</a></td>
-                </tr>
-            </table>
+
+            <form class="form-inline">
+                Тип:
+                <button ng-click="currentWindow.type='1p'"
+                        ng-disabled="currentWindow.type=='1p'"
+                        >1</button>
+                <button ng-click="currentWindow.type='2p'"
+                        ng-disabled="currentWindow.type=='2p'"
+                        >2</button>
+                <button ng-click="currentWindow.type='3p'"
+                        ng-disabled="currentWindow.type=='3p'"
+                        >3</button>
+                <button ng-click="currentWindow.type='door'"
+                        ng-disabled="currentWindow.type=='door'"
+                        >Дверь</button>
+            </form>
+
+            <form class="form-inline">
+                Стеклопакет
+                <button ng-click="currentWindow.steklopaket=1"
+                        ng-disabled="currentWindow.steklopaket==1"
+                        >1</button>
+                <button ng-click="currentWindow.steklopaket=2"
+                        ng-disabled="currentWindow.steklopaket==2"
+                        >2</button>
+                надбавка {{{1:20, 2:30}[currentWindow.steklopaket]}}
+            </form>
+            Высота <input type="number" ng-model="currentWindow.height"> см<br>
+            Ширина <input type="number" ng-model="currentWindow.width"> см<br>
+
+            <div ng-repeat="pane in currentWindow.getActivePanes()">
+                Створка {{$index + 1}}: <input type="number" ng-model="pane.width"> см<br>
+            </div>
+
+            Площадь {{currentWindow.height * currentWindow.width}} см<sup>2</sup><br>
+            Длина импостов {{currentWindow.height * (currentWindow.getPanesCount() - 1)}} см<br>
+            Длина отливов, подоконников {{{true:0, false:currentWindow.width}[currentWindow.type == 'door']}} см<br>
+            Длина откосов {{2 * currentWindow.height + currentWindow.width}} см<br>
+            Ламинация <input type="checkbox" ng-model="currentWindow.laminate"><br>
+            <form class="form-inline">
+                Профили
+                <button ng-click="currentWindow.profile=1"
+                        ng-disabled="currentWindow.profile==1"
+                        >0%</button>
+                <button ng-click="currentWindow.profile=2"
+                        ng-disabled="currentWindow.profile==2"
+                        >10%</button>
+                <button ng-click="currentWindow.profile=3"
+                        ng-disabled="currentWindow.profile==3"
+                        >50%</button>
+            </form>
+            {{windows.toSource()}}
         </div>
     </div>
 </body>
