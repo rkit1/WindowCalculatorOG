@@ -9,8 +9,12 @@ Window = function(w){
     this.steklopaket = 1;
     this.laminate = 0;
     this.profile = 1;
-    this.heightOfTPart = 0 // C13 в калькуляторе не используется
-    this.shtulpLenght = 0; // C11 в калькуляторе не используется
+    this.framugi = 0; // C16. Не используется
+    this.heightOfTPart = 0; // C13. Не используется
+    this.shtulpLenght = 0; // C11. Не используется
+    this.raise = 30; // C30 FIXME
+    this.sandichHeight = 0; // C18. Не используется
+    this.sandvichColorCoefficient = 0; // C19. Не используется
     return this;
 };
 Window.prototype.getLaminateK = function() {
@@ -54,10 +58,15 @@ Window.prototype.getStvorkiAndFramugiPrice = function(){
            * ( this.getLaminateK()
              + this.getPanesOfType('rot') * 70
              + this.getPanesOfType('rotdrop') * 85
-             +
-             )
-
-
+             + this.framugi * 45 )
+};
+Window.prototype.getAreaRaise = function(){
+    // (C8*C9)*C17/1000000 из C23
+    return (this.width + this.height) / 10^6 * this.raise;
+};
+Window.prototype.getSandwichPrice = function(){
+    // C8*C18*C19 из C23
+    return this.width * this.sandichHeight * this.sandvichColorCoefficient;
 };
 Window.prototype.getGlassPrice = function() {
     // 47*(C8*C9)/1000000 из C23
@@ -83,6 +92,16 @@ Window.prototype.getActivePanes = function(){
     if (this.type == 'door') return [];
     return this.panes.slice(0, this.getPanesCount());
 };
+Window.prototype.getTotalSelfPrice = function(){
+    // C23
+    return this.getFramePrice() + this.getGlassPrice() + this.getImpostsPrice() + this.getShtulpPrice()
+           + this.getStvorkiAndFramugiPrice + this.getAreaRaise() + this.getSandwichPrice();
+};
+Window.prototype.getTotalPrice = function(){
+    // C22
+    return this.getTotalSelfPrice() * 22;
+};
+
 function CalcController($scope, $cookies) {
     $scope.newWindow = function(){
         $scope.windows[$scope.windows.length] =
