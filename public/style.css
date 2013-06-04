@@ -13,3 +13,10 @@ table.windowImage
     border: 1px solid black;
 }
 table.windowImage td { border: 1px solid black; }
+
+
+#fullWindowImage td.pane  { border: 1px solid black; background-color:lightblue; }
+#fullWindowImage tr.fullWidthSelector {
+    height: 20px;
+    text-align: center;
+}
