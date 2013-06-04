@@ -143,7 +143,21 @@
             Длина импостов {{currentWindow.getImpostsLength()}} см<br>
             Длина отливов, подоконников {{{true:0, false:currentWindow.width}[currentWindow.type == 'door']}} см<br>
             Длина откосов {{2 * currentWindow.height + currentWindow.width}} см<br>
-            Рама: {{(currentWindow.height + currentWindow.width)}}
+            Рама: {{currentWindow.height + currentWindow.width}}<br>
+            Цена: {{currentWindow.getTotalSelfPrice()}}<br>
+            getFramePrice: {{currentWindow.getFramePrice()}}<br>
+            getImpostsLength: {{currentWindow.getImpostsLength()}}<br>
+            getImpostsPrice: {{currentWindow.getImpostsPrice()}}<br>
+            getShtulpPrice: {{currentWindow.getShtulpPrice()}}<br>
+            getStvorkiAndFramugiWidth: {{currentWindow.getStvorkiAndFramugiWidth()}}<br>
+            getStvorkiAndFramugiPrice: {{currentWindow.getStvorkiAndFramugiPrice()}}<br>
+            getAreaRaise: {{currentWindow.getAreaRaise()}}<br>
+            getSandwichPrice: {{currentWindow.getSandwichPrice()}}<br>
+            getGlassPrice: {{currentWindow.getGlassPrice()}}<br>
+            getTotalSelfPrice: {{currentWindow.getTotalSelfPrice()}}<br>
+
+
+
             <hr>
             {{windows.toSource()}}
         </div>

@@ -13,10 +13,37 @@ Window = function(w){
     this.heightOfTPart = 0; // C13. Не используется
     this.shtulpLenght = 0; // C11. Не используется
     this.raise = 30; // C30 FIXME
-    this.sandichHeight = 0; // C18. Не используется
+    this.sandwichHeight = 0; // C18. Не используется
     this.sandvichColorCoefficient = 0; // C19. Не используется
     return this;
 };
+Window.prototype.getPanesOfType = function(type) {
+    var panes = this.getActivePanes();
+    var out = [];
+    for (var i in panes) if (panes[i].type = type) out[out.length] = panes[i];
+    return out;
+};
+Window.prototype.getSizeError = function() {
+    var aPanes = this.getActivePanes();
+    var w = this.width;
+    for (var p in aPanes)
+        w -= aPanes[p].width;
+    return w;
+};
+Window.prototype.getPanesCount = function(){
+    switch (this.type)
+    {
+        case '1p': return 1;
+        case '2p': return 2;
+        case '3p': return 3;
+    }
+    return 1;
+}
+Window.prototype.getActivePanes = function(){
+    if (this.type == 'door') return [];
+    return this.panes.slice(0, this.getPanesCount());
+};
+
 Window.prototype.getLaminateK = function() {
     // 45 из B21, (1+C21/100)/1000 из C23. Вынесено в отдельную функцию из-за частоты употребления
     return (1 + (this.laminate * 45 / 100))/1000;
@@ -34,20 +61,15 @@ Window.prototype.getImpostsPrice = function() {
 };
 Window.prototype.getShtulpPrice = function() {
     // C11*18*(1+C21/100)/1000 из C23
-    return this.shtulpLenght * 18 * this.geLaminateK();
+    return this.shtulpLenght * 18 * this.getLaminateK();
 };
 Window.prototype.getStvorkiAndFramugiWidth = function() {
     // C12
     var w = 0;
     var panes = this.getActivePanes();
     for (var i in panes)
-        if (panes[i].type = 'r' || panes[i].type == 'ro') w += pane.width;
-};
-Window.prototype.getPanesOfType = function(type) {
-    var panes = this.getActivePanes();
-    var out = [];
-    for (var i in panes) if (panes[i].type = type) out[out.length] = panes[i];
-    return out;
+        if (panes[i].type = 'r' || panes[i].type == 'ro') w += panes[i].width;
+    return w;
 };
 Window.prototype.getStvorkiAndFramugiPrice = function(){
     // (C12*2+((C14+C15)*(C9-C13)*2+C16*C13*2)*9*(1+C21/100)/1000+C14*70+C15*85+C16*45) из C23
@@ -66,31 +88,11 @@ Window.prototype.getAreaRaise = function(){
 };
 Window.prototype.getSandwichPrice = function(){
     // C8*C18*C19 из C23
-    return this.width * this.sandichHeight * this.sandvichColorCoefficient;
+    return this.width * this.sandwichHeight * this.sandvichColorCoefficient;
 };
 Window.prototype.getGlassPrice = function() {
     // 47*(C8*C9)/1000000 из C23
     return 47 * this.width * this.height / 10^6
-};
-Window.prototype.getSizeError = function() {
-    var aPanes = this.getActivePanes();
-    var w = this.width;
-    for (var p in aPanes)
-        w -= aPanes[p].width;
-    return w;
-};
-Window.prototype.getPanesCount = function(){
-    switch (this.type)
-    {
-        case '1p': return 1;
-        case '2p': return 2;
-        case '3p': return 3;
-    }
-    return 1;
-};
-Window.prototype.getActivePanes = function(){
-    if (this.type == 'door') return [];
-    return this.panes.slice(0, this.getPanesCount());
 };
 Window.prototype.getTotalSelfPrice = function(){
     // C23
