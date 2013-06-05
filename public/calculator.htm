@@ -34,6 +34,7 @@
                                 </tr>
                             </table>
                         </button>
+                        {{window.getTotalPrice()}} $
                     </td>
                     <td class="windowSelector">
                         <button ng-click="newWindow()"><i class="icon-plus-sign"></i> Добавить окно</button>
@@ -68,7 +69,7 @@
 
             <!-- Изображение окна -->
             <table id="fullWindowImage"
-                   width="{{currentWindow.width*3}}px" height="{{currentWindow.height*3}}px">
+                   width="{{currentWindow.get}}px" height="{{currentWindow.height*3}}px">
                 <tr class="fullWidthSelector">
                     <td rowspan="2">
                         <label><input type="number" class="span1"
@@ -102,7 +103,7 @@
                         ng-disabled="currentWindow.laminate==2"
                         >двусторонняя</button>
             </div><br>
-
+<!--
             Профили
             <div class="input-append">
                 <button class="btn"
@@ -118,7 +119,7 @@
                         ng-disabled="currentWindow.profile==3"
                         >50%</button>
             </div><br>
-
+-->
             Стеклопакет
             <div class="input-append">
                 <button class="btn"
@@ -136,15 +137,6 @@
                 Ошибка {{currentWindow.getSizeError()}}<br>
             </div>
 -->
-
-            <hr>
-            <h2>Раcчет</h2>
-            Площадь {{currentWindow.height * currentWindow.width / 1000000}} м<sup>2</sup><br>
-            Длина импостов {{currentWindow.getImpostsLength()}} см<br>
-            Длина отливов, подоконников {{{true:0, false:currentWindow.width}[currentWindow.type == 'door']}} см<br>
-            Длина откосов {{2 * currentWindow.height + currentWindow.width}} см<br>
-            Рама: {{currentWindow.height + currentWindow.width}}<br>
-            Цена: {{currentWindow.getTotalPrice()}}<br>
 
             <hr>
             getFramePrice: {{currentWindow.getFramePrice()}}<br>
