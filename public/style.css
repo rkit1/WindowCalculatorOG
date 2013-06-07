@@ -14,9 +14,36 @@ table.windowImage
 }
 table.windowImage td { border: 1px solid black; }
 
+.paneWidthSelector
+{
+    background-image: url('img/arrowH130.png');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.windowWidthSelector
+{
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.windowHeightSelector
+{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('img/arrowV240.png');
+}
+td[colspan="1"].windowWidthSelector{ background-image: url("img/arrowH130.png"); }
+td[colspan="2"].windowWidthSelector{ background-image: url("img/arrowH260.png"); }
+td[colspan="3"].windowWidthSelector{ background-image: url("img/arrowH390.png"); }
 
-#fullWindowImage td.pane  { border: 1px solid black; background-color:lightblue; }
-#fullWindowImage tr.fullWidthSelector {
-    height: 20px;
+.paneType { width: 130px; height: 241px; cursor: pointer; }
+.paneTypeSolid {background-image: url('img/wnd_0.png');}
+.paneTypeRot {background-image: url('img/wnd_2.png');}
+.paneTypeRotdrop {background-image: url('img/wnd_4.png');}
+
+.dimension {
+    width: 40px;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 0;
     text-align: center;
 }
