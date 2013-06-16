@@ -2,12 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
     <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-cookies.min.js"></script>
-    <script src="jsdeps/ui-bootstrap-tpls-0.3.0.min.js"></script>
-    <script src="controller.js"></script>
     <link href="style.css" rel="stylesheet">
     <title></title>
 </head>
@@ -22,14 +17,14 @@
                         <a>
                             <table class="windowImage">
                                 <tr>
-                                    <td>&nbsp;</td>
-                                    <td ng-show="window.type == '2p' || window.type == '3p'">&nbsp;</td>
-                                    <td ng-show="window.type == '3p'">&nbsp;</td>
+                                    <td></td>
+                                    <td ng-show="window.type == '2p' || window.type == '3p'"></td>
+                                    <td ng-show="window.type == '3p'"></td>
                                 </tr>
                                 <tr style="background-color: white;" ng-show="window.type == 'door'">
-                                    <td>&nbsp;</td>
-                                    <td ng-show="window.type == '2p' || window.type == '3p'">&nbsp;</td>
-                                    <td ng-show="window.type == '3p'">&nbsp;</td>
+                                    <td></td>
+                                    <td ng-show="window.type == '2p' || window.type == '3p'"></td>
+                                    <td ng-show="window.type == '3p'"></td>
                                 </tr>
                             </table>
                             {{window.getTotalPrice() | currency}}
@@ -40,31 +35,35 @@
                     <li ng-click="newWindow()"><a><i class="icon-plus-sign"></i></a></li>
                 </ul>
 
-                <form class="form-inline">
-                    <!--<input type="text" ng-model="currentWindow.name">-->
-                    <!--<button ng-click="removeWindow(currentWindow)"><i class="icon-trash"></i> Удалить окно</button>-->
-                </form>
-
-                Тип:
-                <div class="input-append">
-                    <button class="btn"
-                            ng-click="currentWindow.type='1p'"
-                            ng-disabled="currentWindow.type=='1p'"
-                            >1</button>
-                    <button class="btn"
-                            ng-click="currentWindow.type='2p'"
-                            ng-disabled="currentWindow.type=='2p'"
-                            >2</button>
-                    <button class="btn"
-                            ng-click="currentWindow.type='3p'"
-                            ng-disabled="currentWindow.type=='3p'"
-                            >3</button>
-                    <button class="btn"
-                            ng-click="currentWindow.type='door'"
-                            ng-disabled="currentWindow.type=='door'"
-                            >Дверь</button>
+                <div class="row-fluid">
+                    <div class="span5">
+                        Тип:
+                        <div class="input-append">
+                            <button class="btn"
+                                    ng-click="currentWindow.type='1p'"
+                                    ng-disabled="currentWindow.type=='1p'"
+                                    >1</button>
+                            <button class="btn"
+                                    ng-click="currentWindow.type='2p'"
+                                    ng-disabled="currentWindow.type=='2p'"
+                                    >2</button>
+                            <button class="btn"
+                                    ng-click="currentWindow.type='3p'"
+                                    ng-disabled="currentWindow.type=='3p'"
+                                    >3</button>
+                            <button class="btn"
+                                    ng-click="currentWindow.type='door'"
+                                    ng-disabled="currentWindow.type=='door'"
+                                    >Дверь</button>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <div class="input-append">
+                            <button class="btn btn-danger"
+                                    ng-click="removeWindowConfirm(currentWindow)"><i class="icon-trash"></i> Удалить изделие</button>
+                        </div>
+                    </div>
                 </div>
-
                 <!--<label>Количество
                     <input type="number" class="input-mini"
                            min="1" max="5"
@@ -73,42 +72,61 @@
 
 
                 <!-- Изображение окна -->
-                <table id="fullWindowImage">
-                    <tr style="height: 10px; text-align: center;">
-                        <td>&nbsp;</td>
+                <table id="fullWindowImage" ng-show="{'1p': true,'2p': true,'3p': true}[currentWindow.type]">
+                    <tr>
+                        <td></td>
                         <td colspan="{{currentWindow.getActivePanes().length}}"
                             class="windowWidthSelector">
-                            <input type="number" class="dimension" ng-model="currentWindow.width">
+                            <input type="number" class="dimension" ng-model="currentWindow.width"
+                                   ng-change="currentWindow.recalculateWidth()">
                         </td>
                     </tr>
                     <tr>
                         <td class="windowHeightSelector">
-                            <label><input type="number" class="dimension"
-                                          ng-model="currentWindow.height" ></label>
+                            <input type="number" class="dimension"
+                                   ng-model="currentWindow.height">
                         </td>
                         <td ng-repeat="pane in currentWindow.getActivePanes()"
                             ng-class="{solid: 'paneTypeSolid', rot: 'paneTypeRot', rotdrop: 'paneTypeRotdrop'}[pane.type]"
                             title="{{{solid: 'Глухая створка', rot: 'Поворотная створка', rotdrop: 'Поворотно-откидная створка'}[pane.type]}}"
                             class="paneType" ng-click="paneTypeSelector.open(pane)">
-                            &nbsp;
+
                         </td>
                     </tr>
-                    <tr style="height: 10px; text-align: center;">
-                        <td>&nbsp;</td>
+                    <tr>
+                        <td></td>
                         <td ng-repeat="pane in currentWindow.getActivePanes()"  class="paneWidthSelector">
                             <input type="number" class="dimension" ng-model="pane.width" ng-readonly="$last"
                                    ng-change="currentWindow.recalculateWidth()">
                         </td>
                     </tr>
-                </table><br>
+                    <tr>
+                        <td></td>
+                        <td ng-repeat="pane in currentWindow.getActivePanes()"  class="panesAccessories">
 
-                Ламинация
-                <select ng-model="currentWindow.laminate" class="span3">
-                    <option value="0">нет</option>
-                    <option value="1">односторонняя</option>
-                    <option value="2">двусторонняя</option>
-                </select>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Изображение двери -->
+                <table ng-show="currentWindow.type == 'door'">
+                    <tr>
+                        <td></td>
+                        <td class="doorWidthSelector">
+                            <input type="number" class="dimension" ng-model="currentWindow.width">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="doorHeightSelector">
+                            <input type="number" class="dimension"
+                                   ng-model="currentWindow.height">
+                        </td>
+                        <td class="doorImage"></td>
+                    </tr>
+                </table>
+
                 <br>
+
                 Ламинация
                 <div class="input-append">
                     <button class="btn" ng-click="currentWindow.laminate=0"
@@ -123,45 +141,13 @@
                             ng-disabled="currentWindow.laminate==2"
                             >двусторонняя</button>
                 </div><br>
-                <!--
-                            Профили
-                            <div class="input-append">
-                                <button class="btn"
-                                        ng-click="currentWindow.profile=1"
-                                        ng-disabled="currentWindow.profile==1"
-                                        >0%</button>
-                                <button class="btn"
-                                        ng-click="currentWindow.profile=2"
-                                        ng-disabled="currentWindow.profile==2"
-                                        >10%</button>
-                                <button class="btn"
-                                        ng-click="currentWindow.profile=3"
-                                        ng-disabled="currentWindow.profile==3"
-                                        >50%</button>
-                            </div><br>
-
-                Стеклопакет
-                <div class="input-append">
-                    <button class="btn"
-                            ng-click="currentWindow.steklopaket=1"
-                            ng-disabled="currentWindow.steklopaket==1"
-                            >1</button>
-                    <button class="btn"
-                            ng-click="currentWindow.steklopaket=2"
-                            ng-disabled="currentWindow.steklopaket==2"
-                            >2</button>
-                </div>
-
-    -->
-
                 <hr>
 
-                {{windows.toSource()}}
             </div>
             <div class="span3">
-                <h5>Изделия: {{getTotalPrice() | currency}}</h5>
-                <h5>Монтаж: {{getMontagePrice() | currency}}</h5>
-                <h5>Доставка: {{getDeliveryPrice() | currency}}</h5>
+                <h4>Окна и двери: {{getTotalWindowsPrice() | currency}}</h4>
+                <h4>Монтаж: {{getMontagePrice() | currency}}</h4>
+                <h4>Доставка: {{getDeliveryPrice() | currency}}</h4>
                 <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
                 <br><br><br><br>
                 <button ng-click="reset()"><i class="icon-trash"></i> Сбросить калькулятор</button>
@@ -169,8 +155,14 @@
         </div>
     </div>
 
-
-    <div modal="paneTypeSelector.isOpen" close="paneTypeSelector.close()" options="opts">
+    <div modal="confirm.isOpen" close="confirm.close()" options="confirm.options">
+        <div class="modal-header">{{confirm.message}}</div>
+        <div class="modal-footer">
+            <button class="btn btn-warning" ng-click="confirm.confirm()">Да</button>
+            <button class="btn btn-primary cancel" ng-click="confirm.close()">Нет</button>
+        </div>
+    </div>
+    <div modal="paneTypeSelector.isOpen" close="paneTypeSelector.close()" options="paneTypeSelector.options">
         <div class="modal-header">
             <h4>Тип створки:
                 {{{solid: 'глухая', rot: 'поворотная', rotdrop: 'поворотно-откидная'}[paneTypeSelector.hoverType]}}</h4>
@@ -180,19 +172,19 @@
                 <li>
                     <a class="thumbnail" ng-click="paneTypeSelector.select('solid')"
                        ng-mouseover="paneTypeSelector.hover('solid')">
-                        <img src="img/wnd_0.png" alt="Глухая створка">
+                        <img src="img/paneSolid_h240.png" alt="Глухая створка">
                     </a>
                 </li>
                 <li>
                     <a class="thumbnail"  ng-click="paneTypeSelector.select('rot')"
                        ng-mouseover="paneTypeSelector.hover('rot')">
-                        <img src="img/wnd_2.png" alt="Поворотная створка">
+                        <img src="img/paneRotL_h240.png" alt="Поворотная створка">
                     </a>
                 </li>
                 <li>
                     <a class="thumbnail"  ng-click="paneTypeSelector.select('rotdrop')"
                        ng-mouseover="paneTypeSelector.hover('rotdrop')">
-                        <img src="img/wnd_4.png" alt="Поворотно-откидная створка">
+                        <img src="img/paneRotDropL_h240.png" alt="Поворотно-откидная створка">
                     </a>
                 </li>
             </ul>
@@ -203,5 +195,10 @@
         </div>
     </div>
 </div>
+<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-cookies.min.js"></script>
+<script src="jsdeps/ui-bootstrap-tpls-0.3.0.min.js"></script>
+<script src="controller.js"></script>
 </body>
 </html>

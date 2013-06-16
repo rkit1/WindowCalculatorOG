@@ -1,4 +1,4 @@
-angular.module('Calc', ['ngCookies', 'ui.bootstrap']);
+
 Window = function(w){
     //this.name = 'Новое окно';
     this.type = '1p';
@@ -126,6 +126,10 @@ PerWindowTable = function(w){
         return this.r24() * this.r27()
     };
 
+    this.r32 = function(){
+        return w.width;
+    };
+
     return this;
     };
 FullTable = function(ws){
@@ -145,9 +149,25 @@ FullTable = function(ws){
 
     // Доставка
     this.c66 = function(){
-        return 66;
+        return 60;
     };
+
+    // Подоконный профиль пог. мм
+    this.c35 = function(){
+        var r = 0;
+        for (i in ws)
+            if (ws[i].type == '1p' || ws[i].type == '2p' || ws[i].type == '3p' )
+                r += ws[i].getTable().r32();
+        return r;
+    };
+
+    // Подоконный профиль
+    this.c36 = function (){
+        return this.c35()/250;
+    };
+
     return this;
+
 };
 Window.prototype.getTable = function(){
     return new PerWindowTable(this);
@@ -176,7 +196,8 @@ Window.prototype.recalculateWidth = function(){
     panes[panes.length - 1].width = w;
 };
 
-function CalcController($scope, $cookies) {
+var calc = angular.module('Calc', ['ngCookies', 'ui.bootstrap']);
+calc.controller('CalcController', function ($scope, $cookies) {
     $scope.paneTypeSelector = {
         isOpen: false,
         pane: null,
@@ -195,6 +216,44 @@ function CalcController($scope, $cookies) {
         },
         hover: function(t){
             this.hoverType = t;
+        },
+        options: {
+            backdropFade: true,
+            dialogFade: true,
+            backdropClick: true,
+            keyboard: true,
+            backdrop: true
+        }
+    };
+    $scope.confirm = {
+        isOpen: false,
+        message: 'Ошибка',
+        onYes: function(){},
+        onNo: function(){},
+        open: function (msg, onYes, onNo){
+            this.isOpen = true;
+            this.message = msg;
+            this.onYes = onYes;
+            this.onNo = onNo;
+        },
+        close: function(){
+            this.isOpen = false;
+            this.onNo();
+            this.onYes = function(){};
+            this.onNo = function(){};
+        },
+        confirm: function(){
+            this.isOpen = false;
+            this.onYes();
+            this.onYes = function(){};
+            this.onNo = function(){};
+        },
+        options: {
+            backdropFade: true,
+            dialogFade: true,
+            backdropClick: true,
+            keyboard: true,
+            backdrop: true
         }
     };
     $scope.newWindow = function(){
@@ -204,16 +263,12 @@ function CalcController($scope, $cookies) {
     $scope.selectWindow = function(w){
         $scope.currentWindow = $scope.windows[w];
     };
-    $scope.paneTypeselector = function(pane){
-
+    $scope.removeWindowConfirm = function(w){
+        $scope.confirm.open('Точно удалить?', function(){$scope.removeWindow(w)}, function(){});
     };
-    //FIXME
     $scope.removeWindow = function(w) {
-        delete $scope.windows[$scope.windows.indexOf(w)];
-        if ($scope.windows.length < 1) {
-            $scope.currentWindow = new Window();
-            $scope.windows = [$scope.currentWindow];
-        }
+        $scope.windows.splice($scope.windows.indexOf(w), 1);
+        if ($scope.windows.length < 1) $scope.reset();
     };
     $scope.reset = function(){
         $scope.currentWindow = new Window();
@@ -232,31 +287,32 @@ function CalcController($scope, $cookies) {
             $scope.windows[$scope.windows.length] = w;
         }
     };
-
-    if ($cookies.windows != null){
-        $scope.restore()
-        $scope.currentWindow = $scope.windows[0];
-    }
-    else $scope.reset();
-
-    $scope.getTotalPrice = function (){
+    $scope.getTotalWindowsPrice = function (){
         var tp = 0;
         for (i in $scope.windows)
             tp += $scope.windows[i].getTotalPrice();
         $scope.save();
         return tp;
     };
-
+    $scope.getTotalPrice = function(){
+        // FIXME c62 i62
+        return $scope.getTotalWindowsPrice();
+    };
     $scope.getMontagePrice = function(){
         return $scope.getFullTable().c65();
     };
-
     $scope.getDeliveryPrice = function(){
         return $scope.getFullTable().c66();
     };
-
     $scope.getFullTable = function (){
         return new FullTable($scope.windows);
     };
 
-}
+
+    if ($cookies.windows != null){
+        $scope.restore()
+        $scope.currentWindow = $scope.windows[0];
+    }
+    else $scope.reset();
+});
+

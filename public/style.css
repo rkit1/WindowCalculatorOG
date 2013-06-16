@@ -1,5 +1,4 @@
 #windowsList {height: 100px;}
-body {margin-left: 5%; margin-right: 5%;}
 td.windowSelector {width: 120px;}
 td.windowSelector button {width: 110px;}
 a {cursor: pointer;}
@@ -14,31 +13,21 @@ table.windowImage
 }
 table.windowImage td { border: 1px solid black; }
 
-.paneWidthSelector
-{
-    background-image: url('img/arrowH130.png');
-    background-position: center;
-    background-repeat: no-repeat;
-}
-.windowWidthSelector
-{
-    background-position: center;
-    background-repeat: no-repeat;
-}
-.windowHeightSelector
-{
-    background-position: center;
-    background-repeat: no-repeat;
-    background-image: url('img/arrowV240.png');
-}
-td[colspan="1"].windowWidthSelector{ background-image: url("img/arrowH130.png"); }
-td[colspan="2"].windowWidthSelector{ background-image: url("img/arrowH260.png"); }
-td[colspan="3"].windowWidthSelector{ background-image: url("img/arrowH390.png"); }
+.paneWidthSelector { background: url('img/arrowH110.png') no-repeat center; text-align: center; }
+.windowWidthSelector { background: no-repeat center;  text-align: center; }
+.windowHeightSelector { background: url('img/arrowV240.png') no-repeat center;}
+td[colspan="1"].windowWidthSelector{ background-image: url("img/arrowH110.png"); }
+td[colspan="2"].windowWidthSelector{ background-image: url("img/arrowH222.png"); }
+td[colspan="3"].windowWidthSelector{ background-image: url("img/arrowH334.png"); }
 
-.paneType { width: 130px; height: 241px; cursor: pointer; }
-.paneTypeSolid {background-image: url('img/wnd_0.png');}
-.paneTypeRot {background-image: url('img/wnd_2.png');}
-.paneTypeRotdrop {background-image: url('img/wnd_4.png');}
+.doorWidthSelector { background: url('img/arrowH110.png') no-repeat center; text-align: center;}
+.doorHeightSelector { background: url('img/arrowV364.png') no-repeat center; text-align: center;}
+.doorImage {width: 140px; height: 364px; background: url('img/frame_type_4.png') no-repeat center; }
+
+.paneType { width: 110px; height: 240px; cursor: pointer; }
+.paneTypeSolid {background-image: url('img/paneSolid_h240.png');}
+.paneTypeRot {background-image: url('img/paneRotL_h240.png');}
+.paneTypeRotdrop {background-image: url('img/paneRotDropL_h240.png');}
 
 .dimension {
     width: 40px;
