@@ -4,14 +4,23 @@ td.windowSelector button {width: 110px;}
 a {cursor: pointer;}
 .selector a.selected  {color: red;}
 
-table.windowImage
-{
-    width: 70px;
-    height: 50px;
-    background-color:lightblue;
-    border: 1px solid black;
+.thumbImage {text-align: center; height: 107px;}
+.doorThumbImage {
+    display: inline-block;
+    width: 40px; height: 100px;
+    background: url('img/door_h100.png') no-repeat center;
+    border: 1px solid lightgray;
 }
-table.windowImage td { border: 1px solid black; }
+.paneThumbType
+{
+    height: 80px; width: 37px;
+    display: inline-block;
+    border: 1px solid lightgray;
+}
+.paneThumbTypeSolid { background-image: url('img/paneSolid_h80.png'); }
+.paneThumbTypeRot {background-image: url('img/paneRotL_h80.png');}
+.paneThumbTypeRotdrop {background-image: url('img/paneRotDropL_h80.png');}
+#productTypeSelector a.selected { text-decoration: underline; }
 
 .paneWidthSelector { background: url('img/arrowH110.png') no-repeat center; text-align: center; }
 .windowWidthSelector { background: no-repeat center;  text-align: center; }
@@ -19,11 +28,9 @@ table.windowImage td { border: 1px solid black; }
 td[colspan="1"].windowWidthSelector{ background-image: url("img/arrowH110.png"); }
 td[colspan="2"].windowWidthSelector{ background-image: url("img/arrowH222.png"); }
 td[colspan="3"].windowWidthSelector{ background-image: url("img/arrowH334.png"); }
-
-.doorWidthSelector { background: url('img/arrowH110.png') no-repeat center; text-align: center;}
+.doorWidthSelector { background: url('img/arrowH140.png') no-repeat center; text-align: center;}
 .doorHeightSelector { background: url('img/arrowV364.png') no-repeat center; text-align: center;}
-.doorImage {width: 140px; height: 364px; background: url('img/frame_type_4.png') no-repeat center; }
-
+.doorImage {width: 138px; height: 364px; background: url('img/door_h364.png') no-repeat center; }
 .paneType { width: 110px; height: 240px; cursor: pointer; }
 .paneTypeSolid {background-image: url('img/paneSolid_h240.png');}
 .paneTypeRot {background-image: url('img/paneRotL_h240.png');}
@@ -36,3 +43,15 @@ td[colspan="3"].windowWidthSelector{ background-image: url("img/arrowH334.png");
     border-radius: 0;
     text-align: center;
 }
+
+#productTypeSelector div.item
+{
+    text-align: center;
+    display: inline-block;
+    margin: 5px;
+}
+#productTypeSelector img
+{ border: 1px solid lightgray; }
+
+input.myError { border-color: red; }
+.nav li.myError { border-color: red !important; }

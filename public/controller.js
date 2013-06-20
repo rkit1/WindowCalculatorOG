@@ -1,16 +1,15 @@
 
 Window = function(w){
     //this.name = 'Новое окно';
-    this.type = '1p';
     // 1p, 2p, 3p, door
     this.panes = [{type:'solid', width:50},{type:'solid', width:50},{type:'solid', width:50}];
     //types: 'solid', 'rot', 'rotdrop'
-    this.width = 120;
-    this.height = 100;
     this.steklopaket = 1;
     this.laminate = 0;
     this.profile = 1;
     this.quantity = 1;
+    this.setType('1p');
+    this.checkSizeErrors();
     return this;
 };
 PerWindowTable = function(w){
@@ -166,6 +165,28 @@ FullTable = function(ws){
         return this.c35()/250;
     };
 
+    // Москитная сетка площадь m^2
+    this.c54 = function(){
+        var r = 0;
+        for (i in ws)
+            if (ws[i].type == '1p' || ws[i].type == '2p' || ws[i].type == '3p' ){
+                ps = ws[i].getActivePanes();
+                for (k in ps)
+                    if (ps[k].net) r += (ps[k].width * ws[i].height / 1000000)
+            }
+        return r;
+    };
+
+    // Москитная сетка стоимость
+    this.c55 = function(){
+        return this.c54() * 35;
+    };
+
+
+    // Общая стоимость аксессуаров
+    this.c62 = function(){
+        return (this.c55() + this.c36()) * 1.3;
+    };
     return this;
 
 };
@@ -194,8 +215,57 @@ Window.prototype.recalculateWidth = function(){
     for (i = 0; i < panes.length - 1; i++)
         w -= panes[i].width;
     panes[panes.length - 1].width = w;
+    this.checkSizeErrors();
 };
-
+Window.prototype.setType = function(t){
+    switch (t){
+        case '1p':
+            this.type = t;
+            this.panes[0] = {type: 'solid', width: 800};
+            this.width = 800;
+            this.height = 1500;
+            break;
+        case '2p':
+            this.type = t;
+            this.panes[0] = {type: 'solid', width: 750};
+            this.panes[1] = {type: 'solid', width: 750};
+            this.width = 1500;
+            this.height = 1500;
+            break;
+        case '3p':
+            this.type = t;
+            this.panes[0] = {type: 'solid', width: 700};
+            this.panes[1] = {type: 'solid', width: 700};
+            this.panes[2] = {type: 'solid', width: 700};
+            this.width = 2100;
+            this.height = 1500;
+            break;
+        case 'door':
+            this.type = t;
+            this.width = 700;
+            this.height = 2200;
+            break;
+    }
+};
+Window.prototype.checkSizeErrors = function(){
+    var ps = this.getActivePanes();
+    var out = {errors: {}, paneErrors: []};
+    for (i in ps)
+    {
+        if (ps[i].width < 100)
+        {
+            out.errors.paneTooSmall = true;
+            out.paneErrors[i] = true;
+            out.hasSome = true;
+            if (ps[i].width < 0)
+            {
+                out.errors.paneWindowWidthMismatch = true;
+                out.widthError = true;
+            }
+        }
+    }
+    this.$$errors = out;
+};
 var calc = angular.module('Calc', ['ngCookies', 'ui.bootstrap']);
 calc.controller('CalcController', function ($scope, $cookies) {
     $scope.paneTypeSelector = {
@@ -212,6 +282,8 @@ calc.controller('CalcController', function ($scope, $cookies) {
         },
         select: function(t){
             this.pane.type = t;
+            this.pane.net = false;
+            this.pane.key = false;
             this.close();
         },
         hover: function(t){
@@ -273,6 +345,7 @@ calc.controller('CalcController', function ($scope, $cookies) {
     $scope.reset = function(){
         $scope.currentWindow = new Window();
         $scope.windows = [$scope.currentWindow];
+        $scope.fullTable = new FullTable($scope.windows);
     };
     $scope.save = function(){
         $cookies.windows = angular.toJson($scope.windows, false);
@@ -284,8 +357,12 @@ calc.controller('CalcController', function ($scope, $cookies) {
             var w = new Window();
             for (k in data[i])
                 if (data[i].hasOwnProperty(k)) w[k] = data[i][k];
+            w.checkSizeErrors();
             $scope.windows[$scope.windows.length] = w;
         }
+    };
+    $scope.stateHelper = function(){
+        return angular.toJson($scope.windows, true) + angular.toJson(eval($cookies.windows), true);
     };
     $scope.getTotalWindowsPrice = function (){
         var tp = 0;
@@ -295,24 +372,25 @@ calc.controller('CalcController', function ($scope, $cookies) {
         return tp;
     };
     $scope.getTotalPrice = function(){
-        // FIXME c62 i62
-        return $scope.getTotalWindowsPrice();
+        // FIXME i62
+        return $scope.getTotalWindowsPrice() + this.fullTable.c62();
     };
     $scope.getMontagePrice = function(){
-        return $scope.getFullTable().c65();
+        return $scope.fullTable.c65();
     };
     $scope.getDeliveryPrice = function(){
-        return $scope.getFullTable().c66();
+        return $scope.fullTable.c66();
     };
-    $scope.getFullTable = function (){
-        return new FullTable($scope.windows);
+    $scope.getAccessoryPrice = function(){
+        return $scope.fullTable.c62();
     };
-
 
     if ($cookies.windows != null){
-        $scope.restore()
+        $scope.restore();
         $scope.currentWindow = $scope.windows[0];
+        $scope.fullTable = new FullTable($scope.windows);
     }
     else $scope.reset();
+
 });
 
