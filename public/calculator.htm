@@ -169,8 +169,7 @@
                 <div ng-hide="hasErrors()">
                     <h4>Окна и двери: {{getTotalWindowsPrice() | currency}}</h4>
                     <h4>Аксессуары: {{getAccessoryPrice() | currency}}</h4>
-                    <h4>Монтаж: {{getMontagePrice() | currency}}</h4>
-                    <h4>Доставка: {{getDeliveryPrice() | currency}}</h4>
+                    <h4>Работы (монтаж, доставка): {{getWorksPrice() | currency}}</h4>
                     <h3>Общая сумма: {{getTotalPrice () | currency}}</h3>
                     <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
                 </div>

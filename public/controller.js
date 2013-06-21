@@ -125,6 +125,12 @@ PerWindowTable = function(w){
         return this.r24() * this.r27()
     };
 
+
+    // Общая стоимость изделий
+    this.r30 = function(){
+        return this.r22();
+    };
+
     this.r32 = function(){
         return w.width;
     };
@@ -139,6 +145,15 @@ FullTable = function(ws){
         for (var i in ws)
             r += ws[i].getTable().r28();
         return r;
+    };
+
+
+    // Общая стоимость изделий
+    this.i31 = function(){
+        var s = 0;
+        for (var i in ws)
+            s += ws[i].getTable().r30();
+        return s;
     };
 
     // Монтаж
@@ -165,6 +180,14 @@ FullTable = function(ws){
         return this.c35()/250;
     };
 
+    // FIXME
+    // Подоконники пвх стоимость
+    this.i49 = function() {return 0;};
+
+    // FIXME
+    // Отливы белые стоимость
+    this.i60 = function() {return 0;};
+
     // Москитная сетка площадь m^2
     this.c54 = function(){
         var r = 0;
@@ -182,13 +205,39 @@ FullTable = function(ws){
         return this.c54() * 35;
     };
 
-
     // Общая стоимость аксессуаров
     this.c62 = function(){
         return (this.c55() + this.c36()) * 1.3;
     };
-    return this;
 
+
+    //ВСЕГО Подоконники и отливы:
+    this.i62 = function(){
+        return this.i49() + this.i60;
+    };
+
+    // Общая стоимость работ
+    this.c69 = function() {
+        return this.c65() + this.c66();
+    };
+
+    // Итого к оплате помощник
+    this.c76_pre = function(){
+        return this.i31() + this.c62() +  this.i62();
+    };
+
+
+    // Откосы пвх
+    this.c70 = function(){
+        return 0; //fixme
+    };
+
+    // Итого к оплате
+    this.c76 = function(){
+        return this.c76_pre() * 0.8 + this.c69() + this.c70();
+    };
+
+    return this;
 };
 Window.prototype.getTable = function(){
     return new PerWindowTable(this);
@@ -207,7 +256,7 @@ Window.prototype.getActivePanes = function(){
     return this.panes.slice(0, this.getPanesCount());
 };
 Window.prototype.getTotalPrice = function(){
-    return this.getTable().r22();
+    return this.getTable().r30();
 };
 Window.prototype.recalculateWidth = function(){
     var w = this.width;
@@ -365,21 +414,15 @@ calc.controller('CalcController', function ($scope, $cookies) {
         return angular.toJson($scope.windows, true) + angular.toJson(eval($cookies.windows), true);
     };
     $scope.getTotalWindowsPrice = function (){
-        var tp = 0;
-        for (var i in $scope.windows)
-            tp += $scope.windows[i].getTotalPrice();
         $scope.save();
-        return tp;
+        return this.fullTable.i31();
     };
     $scope.getTotalPrice = function(){
         // FIXME i62
         return $scope.getTotalWindowsPrice() + this.fullTable.c62();
     };
-    $scope.getMontagePrice = function(){
-        return $scope.fullTable.c65();
-    };
-    $scope.getDeliveryPrice = function(){
-        return $scope.fullTable.c66();
+    $scope.getWorksPrice = function(){
+        return $scope.fullTable.c69();
     };
     $scope.getAccessoryPrice = function(){
         return $scope.fullTable.c62();
