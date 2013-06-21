@@ -7,13 +7,13 @@
     <title></title>
 </head>
 <body xmlns:ng="http://angularjs.org" id="ng-app" ng-app="Calc">
-<div ng-controller="CalcController" class="container">
+<div ng-controller="CalcController" class="container" id="ctrl">
     <div>
         <div class="row">
             <div class="span9">
                 <ul class="nav nav-tabs">
                     <li ng-repeat="window in windows"
-                        ng-class="{active: window == currentWindow, myError: window.$$errors.hasSome}"
+                        ng-class="{active: window == currentWindow}"
                         ng-click="selectWindow($index)" >
                         <a>
                             <div class="thumbImage">
@@ -24,17 +24,20 @@
                                      ng-class="{solid: 'paneThumbTypeSolid', rot: 'paneThumbTypeRot', rotdrop: 'paneThumbTypeRotdrop'}[pane.type]"
                                 ></div>
                             </div>
-                            {{window.getTotalPrice() | currency}}
-                            <span ng-show="window.quantity > 1">x {{window.quantity}} = {{window.getTotalPrice() * window.quantity | currency}}</span>
-
+                            <div ng-hide="window.$$errors.hasSome">
+                                {{window.getTotalPrice() | currency}}
+                                <span ng-show="window.quantity > 1">x {{window.quantity}} = {{window.getTotalPrice() * window.quantity | currency}}</span>
+                            </div>
+                            <div ng-show="window.$$errors.hasSome" class="text-error">
+                                Заполнено неверно.
+                            </div>
                         </a>
                     </li>
                     <li ng-click="newWindow()"><a><i class="icon-plus-sign"></i></a></li>
                 </ul>
 
                     <div class="span8">
-                        <div class="inline">
-                            <div id="productTypeSelector">
+                        <div id="productTypeSelector">
                                 Тип:
                                 <div class="item">
                                     <a ng-click="currentWindow.setType('1p')"
@@ -65,7 +68,6 @@
                                                   src="img/doorthumb.png"></a>
                                 </div>
                             </div>
-                        </div>
                         <br>
                         <div class="text-info"
                                 >Все размеры указываются в миллиметрах</div>
@@ -79,7 +81,7 @@
                                         ng-class="{true:'myError'}[currentWindow.$$errors.widthError]">
                                         <input type="number" class="dimension" ng-model="currentWindow.width"
                                                ng-change="currentWindow.recalculateWidth()"
-                                               ng-class="{true:'myError'}[currentWindow.$$errors.errors.paneWindowWidthMismatch]">>
+                                               ng-class="{myError:currentWindow.$$errors.errors.paneWindowWidthMismatch}">
                                     </td>
                                 </tr>
                                 <tr>
@@ -164,12 +166,17 @@
             </div>
 
             <div class="span3">
-                <h4>Окна и двери: {{getTotalWindowsPrice() | currency}}</h4>
-                <h4>Аксессуары: {{getAccessoryPrice() | currency}}</h4>
-                <h4>Монтаж: {{getMontagePrice() | currency}}</h4>
-                <h4>Доставка: {{getDeliveryPrice() | currency}}</h4>
-                <h3>Общая сумма: {{getTotalPrice () | currency}}</h3>
-                <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
+                <div ng-hide="hasErrors()">
+                    <h4>Окна и двери: {{getTotalWindowsPrice() | currency}}</h4>
+                    <h4>Аксессуары: {{getAccessoryPrice() | currency}}</h4>
+                    <h4>Монтаж: {{getMontagePrice() | currency}}</h4>
+                    <h4>Доставка: {{getDeliveryPrice() | currency}}</h4>
+                    <h3>Общая сумма: {{getTotalPrice () | currency}}</h3>
+                    <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
+                </div>
+                <div class="text-error" ng-show="hasErrors()">
+                    Для рассчета исправьте ошибки.
+                </div>
             </div>
         </div>
     </div>

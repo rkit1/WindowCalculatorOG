@@ -38,7 +38,7 @@ PerWindowTable = function(w){
     this.r12 = function() {
         var panes = w.getActivePanes();
         var r = 0;
-        for (i in panes) {
+        for (var i in panes) {
             pane = panes[i];
             if (pane.type == 'rot' || pane.type == 'rotdrop') r += pane.width;
         }
@@ -54,7 +54,7 @@ PerWindowTable = function(w){
     this.r14 = function() {
         var panes =  w.getActivePanes();
         var c = 0;
-        for (i in panes)
+        for (var i in panes)
             if (panes[i].type == 'rot') c++;
         return c;
     };
@@ -63,7 +63,7 @@ PerWindowTable = function(w){
     this.r15 = function() {
         var panes =  w.getActivePanes();
         var c = 0;
-        for (i in panes)
+        for (var i in panes)
             if (panes[i].type == 'rotdrop') c++;
         return c;
     };
@@ -136,7 +136,7 @@ FullTable = function(ws){
     // ОБЩАЯ ПЛОЩАДЬ
     this.i29 = function(){
         var r = 0;
-        for (i in ws)
+        for (var i in ws)
             r += ws[i].getTable().r28();
         return r;
     };
@@ -154,7 +154,7 @@ FullTable = function(ws){
     // Подоконный профиль пог. мм
     this.c35 = function(){
         var r = 0;
-        for (i in ws)
+        for (var i in ws)
             if (ws[i].type == '1p' || ws[i].type == '2p' || ws[i].type == '3p' )
                 r += ws[i].getTable().r32();
         return r;
@@ -168,10 +168,10 @@ FullTable = function(ws){
     // Москитная сетка площадь m^2
     this.c54 = function(){
         var r = 0;
-        for (i in ws)
+        for (var i in ws)
             if (ws[i].type == '1p' || ws[i].type == '2p' || ws[i].type == '3p' ){
                 ps = ws[i].getActivePanes();
-                for (k in ps)
+                for (var k in ps)
                     if (ps[k].net) r += (ps[k].width * ws[i].height / 1000000)
             }
         return r;
@@ -212,7 +212,7 @@ Window.prototype.getTotalPrice = function(){
 Window.prototype.recalculateWidth = function(){
     var w = this.width;
     var panes = this.getActivePanes();
-    for (i = 0; i < panes.length - 1; i++)
+    for (var i = 0; i < panes.length - 1; i++)
         w -= panes[i].width;
     panes[panes.length - 1].width = w;
     this.checkSizeErrors();
@@ -250,7 +250,7 @@ Window.prototype.setType = function(t){
 Window.prototype.checkSizeErrors = function(){
     var ps = this.getActivePanes();
     var out = {errors: {}, paneErrors: []};
-    for (i in ps)
+    for (var i in ps)
     {
         if (ps[i].width < 100)
         {
@@ -353,9 +353,9 @@ calc.controller('CalcController', function ($scope, $cookies) {
     $scope.restore = function(){
         var data = eval($cookies.windows);
         $scope.windows = [];
-        for (i in data) {
+        for (var i in data) {
             var w = new Window();
-            for (k in data[i])
+            for (var k in data[i])
                 if (data[i].hasOwnProperty(k)) w[k] = data[i][k];
             w.checkSizeErrors();
             $scope.windows[$scope.windows.length] = w;
@@ -366,7 +366,7 @@ calc.controller('CalcController', function ($scope, $cookies) {
     };
     $scope.getTotalWindowsPrice = function (){
         var tp = 0;
-        for (i in $scope.windows)
+        for (var i in $scope.windows)
             tp += $scope.windows[i].getTotalPrice();
         $scope.save();
         return tp;
@@ -384,7 +384,11 @@ calc.controller('CalcController', function ($scope, $cookies) {
     $scope.getAccessoryPrice = function(){
         return $scope.fullTable.c62();
     };
-
+    $scope.hasErrors = function(){
+        for (var i in $scope.windows)
+            if ($scope.windows[i].$$errors.hasSome) return true;
+        return false;
+    };
     if ($cookies.windows != null){
         $scope.restore();
         $scope.currentWindow = $scope.windows[0];
