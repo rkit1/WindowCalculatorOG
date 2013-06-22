@@ -183,11 +183,54 @@ FullTable = function(ws){
     // FIXME
     // Подоконники пвх стоимость
     this.i49 = function() {return 0;};
+    this.podokonnikiTable = [
+        { price: [10.8, 17]
+        , width:100 },
+        { price: [12.5, 17]
+        , width:150 },
+        { price: [13.2, 17]
+        , width:200 },
+        { price: [17, 20]
+        , width:250 },
+        { price: [17.6, 23]
+        , width:300 },
+        { price: [19.8, 27]
+        , width:350 },
+        { price: [22.7, 31]
+        , width:400 },
+        { price: [26, 45]
+        , width:450 },
+        { price: [28.3, 53]
+        , width:500 },
+        { price: [30.7, 53]
+        , width:550 },
+        { price: [32.3, 53]
+        , width:600 }
+    ];
 
     // FIXME
     // Отливы белые стоимость
     this.i60 = function() {return 0;};
-
+    this.otlivyTable = [
+        { price: 5
+            , width: "0-110мм"},
+        { price: 7
+            , width: "110-150мм"},
+        { price: 8
+            , width: "151-180мм"},
+        { price: 10
+            , width: "181-200мм"},
+        { price: 11
+            , width: "201-260мм"},
+        { price: 12
+            , width: "261-280мм"},
+        { price: 14
+            , width: "281-310мм"},
+        { price: 15
+            , width: "311-340мм"},
+        { price: 18
+            , width: "341-420мм"}
+    ];
     // Москитная сетка площадь m^2
     this.c54 = function(){
         var r = 0;
@@ -273,6 +316,7 @@ Window.prototype.setType = function(t){
             this.panes[0] = {type: 'solid', width: 800};
             this.width = 800;
             this.height = 1500;
+            this.podokonniki = {madeIn: 'rus', type: 0};
             break;
         case '2p':
             this.type = t;
@@ -280,6 +324,7 @@ Window.prototype.setType = function(t){
             this.panes[1] = {type: 'solid', width: 750};
             this.width = 1500;
             this.height = 1500;
+            this.podokonniki = {madeIn: 'rus', type: 0};
             break;
         case '3p':
             this.type = t;
@@ -288,6 +333,7 @@ Window.prototype.setType = function(t){
             this.panes[2] = {type: 'solid', width: 700};
             this.width = 2100;
             this.height = 1500;
+            this.podokonniki = {madeIn: 'rus', type: 0};
             break;
         case 'door':
             this.type = t;

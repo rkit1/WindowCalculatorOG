@@ -139,11 +139,45 @@
 
                         <br>
 
-                        <label>Количество
-                            <input type="number" class="input-mini"
-                                   min="1"
-                                   ng-model="currentWindow.quantity"><br>
-                        </label>
+                        <label>Подоконники
+                            <!-- ng-select не смог заставить работать -->
+                        <select ng-model="currentWindow.podokonniki.type" class="span3">
+                            <option value="0">100мм</option>
+                            <option value="1">150мм</option>
+                            <option value="2">200мм</option>
+                            <option value="3">250мм</option>
+                            <option value="4">300мм</option>
+                            <option value="5">350мм</option>
+                            <option value="6">400мм</option>
+                            <option value="7">450мм</option>
+                            <option value="8">500мм</option>
+                            <option value="9">550мм</option>
+                            <option value="10">600мм</option>
+                        </select>
+                        <span class="input-append">
+                            <button class="btn" ng-click="currentWindow.podokonniki.madeIn='rus'"
+                                    ng-disabled="currentWindow.podokonniki.madeIn=='rus'"
+                                    >Россия</button>
+                            <button class="btn" ng-click="currentWindow.podokonniki.madeIn='imp'"
+                                    ng-disabled="currentWindow.podokonniki.madeIn=='imp'"
+                                    >Импорт</button>
+                        </span></label>
+
+                        <label>Отливы белые
+                            <!-- ng-select не смог заставить работать -->
+                            <select ng-model="currentWindow.otlivy.type" class="span3">
+                                <option value="0">0-110мм</option>
+                                <option value="1">110-150мм</option>
+                                <option value="2">151-180мм</option>
+                                <option value="3">181-200мм</option>
+                                <option value="4">201-206мм</option>
+                                <option value="5">261-280мм</option>
+                                <option value="6">281-310мм</option>
+                                <option value="7">311-340мм</option>
+                                <option value="8">341-420мм</option>
+                            </select></label>
+
+
                         Ламинация
                         <div class="input-append">
                             <button class="btn" ng-click="currentWindow.laminate=0"
@@ -158,6 +192,11 @@
                                     ng-disabled="currentWindow.laminate==2"
                                     >двусторонняя</button>
                         </div>
+                        <label>Количество
+                            <input type="number" class="input-mini"
+                                   min="1"
+                                   ng-model="currentWindow.quantity"><br>
+                        </label>
                         <div>
                             <button class="btn btn-danger"
                                     ng-click="removeWindowConfirm(currentWindow)"><i class="icon-trash"></i> Удалить изделие</button>
@@ -219,9 +258,10 @@
                     >Отмена</button>
         </div>
     </div>
+    <!--
     <pre>
     {{stateHelper()}}
-        </pre>
+        </pre>-->
 </div>
 <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
