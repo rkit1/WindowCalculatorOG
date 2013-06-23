@@ -8,6 +8,8 @@ Window = function(w){
     this.laminate = 0;
     this.profile = 1;
     this.quantity = 1;
+    this.podokonniki = {madeIn: 'rus', type: 0};
+    this.otlivy = {type:0};
     this.setType('1p');
     this.checkSizeErrors();
     return this;
@@ -180,9 +182,22 @@ FullTable = function(ws){
         return this.c35()/250;
     };
 
-    // FIXME
     // Подоконники пвх стоимость
-    this.i49 = function() {return 0;};
+    this.i49 = function() {
+        var podokonnikiTotal = [];
+        for (var i = 0; i < this.podokonnikiTable.length; i++)
+            podokonnikiTotal[i] = [0,0];
+        for (i in ws){
+            var w = ws[i];
+            if (w.isActuallyWindow())
+                podokonnikiTotal[w.podokonniki.type][w.podokonniki.madeIn] += (w.width / 1000);
+        }
+        var sum = 0;
+        for (i in this.otlivyTable)
+            sum += podokonnikiTotal[i][0] * this.podokonnikiTable[i].price[0]
+                 + podokonnikiTotal[i][1] * this.podokonnikiTable[i].price[1];
+        return sum * 1.3;
+    };
     this.podokonnikiTable = [
         { price: [10.8, 17]
         , width:100 },
@@ -208,9 +223,21 @@ FullTable = function(ws){
         , width:600 }
     ];
 
-    // FIXME
     // Отливы белые стоимость
-    this.i60 = function() {return 0;};
+    this.i60 = function() {
+        var otlivyTotal = [];
+        for (var i = 0; i < this.podokonnikiTable.length; i++)
+            otlivyTotal[i] = 0;
+        for (var i in ws){
+            var w = ws[i];
+            if (w.isActuallyWindow())
+                otlivyTotal[w.otlivy.type] += (w.width / 1000);
+        }
+        var sum = 0;
+        for (var i in this.otlivyTable)
+            sum += otlivyTotal[i] * this.otlivyTable[i].price;
+        return sum * 1.3;
+    };
     this.otlivyTable = [
         { price: 5
             , width: "0-110мм"},
@@ -231,6 +258,7 @@ FullTable = function(ws){
         { price: 18
             , width: "341-420мм"}
     ];
+
     // Москитная сетка площадь m^2
     this.c54 = function(){
         var r = 0;
@@ -256,7 +284,7 @@ FullTable = function(ws){
 
     //ВСЕГО Подоконники и отливы:
     this.i62 = function(){
-        return this.i49() + this.i60;
+        return this.i49() + this.i60();
     };
 
     // Общая стоимость работ
@@ -316,7 +344,6 @@ Window.prototype.setType = function(t){
             this.panes[0] = {type: 'solid', width: 800};
             this.width = 800;
             this.height = 1500;
-            this.podokonniki = {madeIn: 'rus', type: 0};
             break;
         case '2p':
             this.type = t;
@@ -324,7 +351,6 @@ Window.prototype.setType = function(t){
             this.panes[1] = {type: 'solid', width: 750};
             this.width = 1500;
             this.height = 1500;
-            this.podokonniki = {madeIn: 'rus', type: 0};
             break;
         case '3p':
             this.type = t;
@@ -333,7 +359,6 @@ Window.prototype.setType = function(t){
             this.panes[2] = {type: 'solid', width: 700};
             this.width = 2100;
             this.height = 1500;
-            this.podokonniki = {madeIn: 'rus', type: 0};
             break;
         case 'door':
             this.type = t;
@@ -360,6 +385,16 @@ Window.prototype.checkSizeErrors = function(){
         }
     }
     this.$$errors = out;
+};
+Window.prototype.isActuallyWindow = function(){
+    switch (this.type){
+        case '1p':
+        case '2p':
+        case '3p':
+            return true;
+        default:
+            return false;
+    }
 };
 var calc = angular.module('Calc', ['ngCookies', 'ui.bootstrap']);
 calc.controller('CalcController', function ($scope, $cookies) {
@@ -472,6 +507,9 @@ calc.controller('CalcController', function ($scope, $cookies) {
     };
     $scope.getAccessoryPrice = function(){
         return $scope.fullTable.c62();
+    };
+    $scope.getPodokonnikyOtlivyPrice = function(){
+        return $scope.fullTable.i62();
     };
     $scope.hasErrors = function(){
         for (var i in $scope.windows)

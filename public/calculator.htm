@@ -155,11 +155,11 @@
                             <option value="10">600мм</option>
                         </select>
                         <span class="input-append">
-                            <button class="btn" ng-click="currentWindow.podokonniki.madeIn='rus'"
-                                    ng-disabled="currentWindow.podokonniki.madeIn=='rus'"
+                            <button class="btn" ng-click="currentWindow.podokonniki.madeIn='0'"
+                                    ng-disabled="currentWindow.podokonniki.madeIn=='0'"
                                     >Россия</button>
-                            <button class="btn" ng-click="currentWindow.podokonniki.madeIn='imp'"
-                                    ng-disabled="currentWindow.podokonniki.madeIn=='imp'"
+                            <button class="btn" ng-click="currentWindow.podokonniki.madeIn='1'"
+                                    ng-disabled="currentWindow.podokonniki.madeIn=='1'"
                                     >Импорт</button>
                         </span></label>
 
@@ -208,6 +208,7 @@
                 <div ng-hide="hasErrors()">
                     <h4>Окна и двери: {{getTotalWindowsPrice() | currency}}</h4>
                     <h4>Аксессуары: {{getAccessoryPrice() | currency}}</h4>
+                    <h4>Подоконники и отливы: {{getPodokonnikyOtlivyPrice() | currency}}</h4>
                     <h4>Работы (монтаж, доставка): {{getWorksPrice() | currency}}</h4>
                     <h3>Общая сумма: {{getTotalPrice () | currency}}</h3>
                     <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
