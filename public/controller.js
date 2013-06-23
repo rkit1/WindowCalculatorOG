@@ -1,4 +1,3 @@
-
 Window = function(w){
     //this.name = 'Новое окно';
     // 1p, 2p, 3p, door
@@ -139,7 +138,8 @@ PerWindowTable = function(w){
 
     return this;
     };
-FullTable = function(ws){
+FullTable = function($scope){
+    var ws = $scope.windows;
 
     // ОБЩАЯ ПЛОЩАДЬ
     this.i29 = function(){
@@ -305,9 +305,20 @@ FullTable = function(ws){
 
     // Итого к оплате
     this.c76 = function(){
-        return this.c76_pre() * 0.8 + this.c69() + this.c70();
+        return this.c76_pre() * (1 - this.skidka() / 100) + this.c69() + this.c70();
     };
 
+    this.skidka = function(){
+        var sum = $scope.toRoubles(this.c76_pre());
+        if (sum < 15000) return 22;
+        if (sum < 24000) return 26;
+        if (sum < 36000) return 28;
+        if (sum < 45000) return 30;
+        if (sum < 60000) return 32;
+        if (sum < 80000) return 33;
+        if (sum < 120000) return 34;
+        return 35;
+    };
     return this;
 };
 Window.prototype.getTable = function(){
@@ -471,11 +482,12 @@ calc.controller('CalcController', function ($scope, $cookies) {
     $scope.removeWindow = function(w) {
         $scope.windows.splice($scope.windows.indexOf(w), 1);
         if ($scope.windows.length < 1) $scope.reset();
+        $scope.currentWindow = $scope.windows[0];
     };
     $scope.reset = function(){
         $scope.currentWindow = new Window();
         $scope.windows = [$scope.currentWindow];
-        $scope.fullTable = new FullTable($scope.windows);
+        $scope.fullTable = new FullTable($scope);
     };
     $scope.save = function(){
         $cookies.windows = angular.toJson($scope.windows, false);
@@ -499,8 +511,10 @@ calc.controller('CalcController', function ($scope, $cookies) {
         return this.fullTable.i31();
     };
     $scope.getTotalPrice = function(){
-        // FIXME i62
-        return $scope.getTotalWindowsPrice() + this.fullTable.c62();
+        return this.fullTable.c76();
+    };
+    $scope.getDiscount = function(){
+        return this.fullTable.skidka();
     };
     $scope.getWorksPrice = function(){
         return $scope.fullTable.c69();
@@ -516,10 +530,13 @@ calc.controller('CalcController', function ($scope, $cookies) {
             if ($scope.windows[i].$$errors.hasSome) return true;
         return false;
     };
+    $scope.toRoubles = function(usd){
+        return usd * 32;
+    };
     if ($cookies.windows != null){
         $scope.restore();
         $scope.currentWindow = $scope.windows[0];
-        $scope.fullTable = new FullTable($scope.windows);
+        $scope.fullTable = new FullTable($scope);
     }
     else $scope.reset();
 

@@ -210,7 +210,7 @@
                     <h4>Аксессуары: {{getAccessoryPrice() | currency}}</h4>
                     <h4>Подоконники и отливы: {{getPodokonnikyOtlivyPrice() | currency}}</h4>
                     <h4>Работы (монтаж, доставка): {{getWorksPrice() | currency}}</h4>
-                    <h3>Общая сумма: {{getTotalPrice () | currency}}</h3>
+                    <h3>Общая сумма, включая скидку {{getDiscount()}}%: {{getTotalPrice () | currency}}</h3>
                     <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
                 </div>
                 <div class="text-error" ng-show="hasErrors()">
