@@ -25,8 +25,8 @@
                                 ></div>
                             </div>
                             <div ng-hide="window.$$errors.hasSome">
-                                {{window.getTotalPrice() | currency}}
-                                <span ng-show="window.quantity > 1">x {{window.quantity}} = {{window.getTotalPrice() * window.quantity | currency}}</span>
+                                {{window.getSinglePrice() | rub}}
+                                <span ng-show="window.quantity > 1">x {{window.quantity}} = {{window.getTotalPrice() | rub}}</span>
                             </div>
                             <div ng-show="window.$$errors.hasSome" class="text-error">
                                 Заполнено неверно.
@@ -68,9 +68,6 @@
                                                   src="img/doorthumb.png"></a>
                                 </div>
                             </div>
-                        <br>
-                        <div class="text-info"
-                                >Все размеры указываются в миллиметрах</div>
                         <br>
                         <!-- Изображение окна -->
                             <table id="fullWindowImage" ng-show="{'1p': true,'2p': true,'3p': true}[currentWindow.type]">
@@ -114,32 +111,41 @@
                                     </td>
                                 </tr>
                             </table>
+
+
+                            <!-- Изображение двери -->
+                            <table ng-show="currentWindow.type == 'door'">
+                                <tr>
+                                    <td></td>
+                                    <td class="doorWidthSelector">
+                                        <input type="number" class="dimension" ng-model="currentWindow.width">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="doorHeightSelector">
+                                        <input type="number" class="dimension"
+                                               ng-model="currentWindow.height">
+                                    </td>
+                                    <td class="doorImage"></td>
+                                </tr>
+                            </table>
+
+
+                            <div class="text-info"
+                                >Все размеры указываются в миллиметрах</div>
+                            <div class="text-info"
+                                >Нажмите по створке для изменения типа</div>
                             <div class="text-error"
                                  ng-show="currentWindow.$$errors.errors.paneTooSmall"
                                     >Ширина створки должна быть не меньше 100мм.</div>
                             <div class="text-error"
                                  ng-show="currentWindow.$$errors.errors.paneWindowWidthMismatch"
                                     >Общая ширина створок больше ширины окна</div>
-                        <!-- Изображение двери -->
-                        <table ng-show="currentWindow.type == 'door'">
-                            <tr>
-                                <td></td>
-                                <td class="doorWidthSelector">
-                                    <input type="number" class="dimension" ng-model="currentWindow.width">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="doorHeightSelector">
-                                    <input type="number" class="dimension"
-                                           ng-model="currentWindow.height">
-                                </td>
-                                <td class="doorImage"></td>
-                            </tr>
-                        </table>
+
 
                         <br>
 
-                        <label>Подоконники
+                        <label ng-show="currentWindow.isActuallyWindow()">Подоконники
                             <!-- ng-select не смог заставить работать -->
                         <select ng-model="currentWindow.podokonniki.type" class="span3">
                             <option value="0">100мм</option>
@@ -163,7 +169,7 @@
                                     >Импорт</button>
                         </span></label>
 
-                        <label>Отливы белые
+                        <label ng-show="currentWindow.isActuallyWindow()">Отливы белые
                             <!-- ng-select не смог заставить работать -->
                             <select ng-model="currentWindow.otlivy.type" class="span3">
                                 <option value="0">0-110мм</option>
@@ -192,11 +198,28 @@
                                     ng-disabled="currentWindow.laminate==2"
                                     >двусторонняя</button>
                         </div>
+
+                        <div>
+                            Профили
+                            <div class="input-append">
+                                <button class="btn" ng-click="currentWindow.profile=0"
+                                        ng-disabled="currentWindow.profile==0"
+                                        >0%</button>
+                                <button class="btn" ng-click="currentWindow.profile=1"
+                                        ng-disabled="currentWindow.profile==1"
+                                        >10%</button>
+                                <button class="btn" ng-click="currentWindow.profile=2"
+                                        ng-disabled="currentWindow.profile==2"
+                                        >20%</button>
+                            </div>
+                        </div>
+
                         <label>Количество
                             <input type="number" class="input-mini"
                                    min="1"
                                    ng-model="currentWindow.quantity"><br>
                         </label>
+
                         <div>
                             <button class="btn btn-danger"
                                     ng-click="removeWindowConfirm(currentWindow)"><i class="icon-trash"></i> Удалить изделие</button>
@@ -206,11 +229,12 @@
 
             <div class="span3">
                 <div ng-hide="hasErrors()">
-                    <h4>Окна и двери: {{getTotalWindowsPrice() | currency}}</h4>
-                    <h4>Аксессуары: {{getAccessoryPrice() | currency}}</h4>
-                    <h4>Подоконники и отливы: {{getPodokonnikyOtlivyPrice() | currency}}</h4>
-                    <h4>Работы (монтаж, доставка): {{getWorksPrice() | currency}}</h4>
-                    <h3>Общая сумма, включая скидку {{getDiscount()}}%: {{getTotalPrice () | currency}}</h3>
+                    <h4>Окна и двери: {{getTotalWindowsPrice() | rub}}</h4>
+                    <h4>Аксессуары: {{getAccessoryPrice() | rub}}</h4>
+                    <h4>Подоконники и отливы: {{getPodokonnikyOtlivyPrice() | rub}}</h4>
+                    <h4>Работы (монтаж, доставка): {{getWorksPrice() | rub}}</h4>
+                    <h4>Скидка: -{{getDiscount() | rub}}</h4>
+                    <h3>Общая сумма: {{getTotalPrice() | rub}}</h3>
                     <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
                 </div>
                 <div class="text-error" ng-show="hasErrors()">
