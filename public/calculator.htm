@@ -10,7 +10,7 @@
 <div ng-controller="CalcController" class="container" id="ctrl">
     <div>
         <div class="row">
-            <div class="span9">
+            <div class="span8">
                 <ul class="nav nav-tabs">
                     <li ng-repeat="window in windows"
                         ng-class="{active: window == currentWindow}"
@@ -227,7 +227,7 @@
                 </div>
             </div>
 
-            <div class="span3">
+            <div class="span4">
                 <div ng-hide="hasErrors()">
                     <h4>Окна и двери: {{getTotalWindowsPrice() | rub}}</h4>
                     <h4>Аксессуары: {{getAccessoryPrice() | rub}}</h4>

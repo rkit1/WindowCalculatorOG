@@ -128,6 +128,28 @@ calc.controller('CalcController', function ($scope, $cookies) {
     }
     else $scope.reset();
 });
+calc.factory('data', function($http){
+    return {
+        discountTable: [
+            { minSum: 0
+                , discount: 22 },
+            { minSum: 15000
+                , discount: 26 },
+            { minSum: 24000
+                , discount: 28 },
+            { minSum: 36000
+                , discount: 30 },
+            { minSum: 45000
+                , discount: 32},
+            { minSum: 60000
+                , discount: 33 },
+            { minSum: 80000
+                , discount: 34 },
+            { minSum: 120000
+                , discount: 35 }
+        ]
+    }
+});
 calc.factory('profiles', function(){
     return [
         {
@@ -146,24 +168,7 @@ calc.factory('profiles', function(){
 });
 calc.factory('discount', function(){
     return {
-        discountTable: [
-            { minSum: 0
-            , discount: 22 },
-            { minSum: 15000
-            , discount: 26 },
-            { minSum: 24000
-            , discount: 28 },
-            { minSum: 36000
-            , discount: 30 },
-            { minSum: 45000
-            , discount: 32},
-            { minSum: 60000
-            , discount: 33 },
-            { minSum: 80000
-            , discount: 34 },
-            { minSum: 120000
-            , discount: 35 }
-        ],
+        discountTable: $injector.get('data').discountTable,
         calculateDiscount: function(sum) {
             var curr = $injector.get('currency');
             var disc = 0;
