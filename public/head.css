@@ -1,0 +1,30 @@
+.head h2,ul,ol,li{
+    margin: 0;
+}
+.head ol,ul,li {
+    list-style: none;
+    line-height: 12px;
+}
+
+.menu li {float:left;}
+.menu li a {display:block; text-align:center; color:#FFF; text-decoration:none;}
+.menu li a:hover {text-decoration:underline; color:#0093dd;}
+.head-bg {background:url(http://www.oknagorizont.ru/cursor/images/head.jpg) no-repeat center; margin-bottom: 20px}
+.head {width:1000px; margin:0 auto; height:248px; position:relative;}
+.logo {padding:20px 0 12px 26px;}
+.logo a {display:block; background:url(http://www.oknagorizont.ru/cursor/images/logo.png) no-repeat; width:236px; height:105px; text-indent:-4000px; overflow:hidden;}
+.slogan {color:#0093dd; font-size:32px; line-height:27px; text-align:center; font-family:"Trebuchet MS", Arial, Helvetica, sans-serif; width:236px; padding-left:26px;}
+.slogan span {font-size:16px;}
+.search {background:url(http://www.oknagorizont.ru/cursor/images/search-bg.png) no-repeat; width:236px; height:23px; margin:31px 0 0 26px; padding:0 25px 0 10px;}
+.icons {position:absolute; top:13px; left:836px;}
+.icons li {float:left; margin-right:30px;}
+.icons li a {display:block; height:23px; width:23px;}
+.icons li.home a {background:url(http://www.oknagorizont.ru/cursor/images/icon-home.png) no-repeat;}
+.icons li.sitemap a {background:url(http://www.oknagorizont.ru/cursor/images/icon-sitemap.png) no-repeat;}
+.icons li.mail a {background:url(http://www.oknagorizont.ru/cursor/images/icon-mail.png) no-repeat;}
+.icons li a:hover {background-position:0 -23px;}
+.menutop {position:absolute; top:217px; left:26px;}
+.menutop li {margin-right:43px;}
+.menutop li.last {margin-right:0px;}
+.menutop li a {width:126px; height:21px; background:url(http://www.oknagorizont.ru/cursor/images/menu-hor-bg.png) no-repeat; padding-top:8px;}
+.menutop li a:hover {background-position:0 -29px;}
