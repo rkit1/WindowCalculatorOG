@@ -1,4 +1,4 @@
-var calc = angular.module('Calc', ['ngCookies', 'ui.bootstrap']);
+var calc = angular.module('Calc', ['ngCookies', 'ui.bootstrap', 'ngResource']);
 calc.controller('CalcController', function ($scope, $cookies) {
     $scope.paneTypeSelector = {
         isOpen: false,
@@ -121,34 +121,22 @@ calc.controller('CalcController', function ($scope, $cookies) {
             if ($scope.windows[i].$$errors.hasSome) return true;
         return false;
     };
+    $scope.dataLoaded = false;
     if ($cookies.windows != null){
         $scope.restore();
         $scope.currentWindow = $scope.windows[0];
         $scope.fullTable = new FullTable($scope);
     }
     else $scope.reset();
+    $injector.get('$rootScope').$on('dataIsReady', function(){
+        $scope.dataLoaded = true;
+        $scope.$apply();
+    });
 });
-calc.factory('data', function($http){
-    return {
-        discountTable: [
-            { minSum: 0
-                , discount: 22 },
-            { minSum: 15000
-                , discount: 26 },
-            { minSum: 24000
-                , discount: 28 },
-            { minSum: 36000
-                , discount: 30 },
-            { minSum: 45000
-                , discount: 32},
-            { minSum: 60000
-                , discount: 33 },
-            { minSum: 80000
-                , discount: 34 },
-            { minSum: 120000
-                , discount: 35 }
-        ]
-    }
+calc.factory('data', function($resource){
+    return $resource('data.php').get(function(){
+        $injector.get('$rootScope').$emit('dataIsReady');
+    });
 });
 calc.factory('profiles', function(){
     return [
@@ -167,19 +155,20 @@ calc.factory('profiles', function(){
     ];
 });
 calc.factory('discount', function(){
-    return {
-        discountTable: $injector.get('data').discountTable,
+    var obj = {
         calculateDiscount: function(sum) {
+            var discountTable = $injector.get('data').discountTable;
             var curr = $injector.get('currency');
             var disc = 0;
-            for (var i in this.discountTable)
-                if (curr.toRoubles(sum) >= this.discountTable[i].minSum)
-                    disc = this.discountTable[i].discount;
+            for (var i in discountTable)
+                if (curr.toRoubles(sum) >= discountTable[i].minSum)
+                    disc = discountTable[i].discount;
                 else break;
             return { resultingSum: sum * (1-disc/100)
-                   , discount: sum * (disc/100) }
+                    , discount: sum * (disc/100) }
         }
-    }
+    };
+    return obj;
 });
 calc.factory('currency', function(){
     return{
