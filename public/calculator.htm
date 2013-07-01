@@ -250,18 +250,21 @@
                 </div>
             </div>
 
+
             <div class="span4">
-                <div ng-hide="hasErrors()">
-                    <h4>Окна и двери: {{getTotalWindowsPrice() | rub}}</h4>
-                    <h4>Аксессуары: {{getAccessoryPrice() | rub}}</h4>
-                    <h4>Подоконники и отливы: {{getPodokonnikyOtlivyPrice() | rub}}</h4>
-                    <h4>Работы (монтаж, доставка): {{getWorksPrice() | rub}}</h4>
-                    <h4>Скидка: -{{getDiscount() | rub}}</h4>
-                    <h3>Общая сумма: {{getTotalPrice() | rub}}</h3>
-                    <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
-                </div>
-                <div class="text-error" ng-show="hasErrors()">
-                    Для рассчета исправьте ошибки.
+                <div class="span4" data-spy="affix" data-offset-top="268">
+                    <div ng-hide="hasErrors()">
+                        <h4>Окна и двери: {{getTotalWindowsPrice() | rub}}</h4>
+                        <h4>Аксессуары: {{getAccessoryPrice() | rub}}</h4>
+                        <h4>Подоконники и отливы: {{getPodokonnikyOtlivyPrice() | rub}}</h4>
+                        <h4>Работы (монтаж, доставка): {{getWorksPrice() | rub}}</h4>
+                        <h4>Скидка: -{{getDiscount() | rub}}</h4>
+                        <h3>Общая сумма: {{getTotalPrice() | rub}}</h3>
+                        <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
+                    </div>
+                    <div class="text-error" ng-show="hasErrors()">
+                        Для рассчета исправьте ошибки.
+                    </div>
                 </div>
             </div>
         </div>
@@ -311,6 +314,7 @@
     {{stateHelper()}}
         </pre>-->
 </div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-cookies.min.js"></script>

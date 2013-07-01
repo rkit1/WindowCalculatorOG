@@ -55,3 +55,4 @@ td[colspan="3"].windowWidthSelector{ background-image: url("img/arrowH334.png");
 
 input.myError { border-color: red; }
 
+.affix {top: 0px;}
