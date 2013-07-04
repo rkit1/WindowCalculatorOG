@@ -1,4 +1,75 @@
 var calc = angular.module('Calc', ['ngCookies', 'ui.bootstrap', 'ngResource']);
+calc.factory('data', function($resource){
+    return $resource('data.php').get(function(){
+        $injector.get('$rootScope').$emit('dataIsReady');
+    });
+});
+calc.factory('profiles', function(){
+    return [
+        {
+            priceCoefficient: 100,
+            name: "0%"
+        },
+        {
+            priceCoefficient: 105,
+            name: "5%"
+        },
+        {
+            priceCoefficient: 110,
+            name: "10%"
+        }
+    ];
+});
+calc.factory('discount', function(){
+    var obj = {
+        calculateDiscount: function(sum) {
+            var discountTable = $injector.get('data').discountTable;
+            var curr = $injector.get('currency');
+            var disc = 0;
+            for (var i in discountTable)
+                if (curr.toRoubles(sum) >= discountTable[i].minSum)
+                    disc = discountTable[i].discount;
+                else break;
+            return { resultingSum: sum * (1-disc/100)
+                , discount: sum * (disc/100) }
+        }
+    };
+    return obj;
+});
+calc.factory('currency', function(){
+    return{
+        toRoubles: function(usd){
+            return usd * 32;
+        },
+        toUSD: function(rub){
+            return rub * (1/32);
+        }
+    };
+});
+calc.factory('discountParser', function(){
+    return function(str){
+        var r = new RegExp(/[0-9]+ [0-9]+/);
+    };
+});
+calc.filter('rub', function(){
+    return function(input){
+        var rub = $injector.get('currency').toRoubles(input);
+        rub = Math.round(rub);
+        return rub + "р";
+    }
+});
+var $injector = angular.injector(['Calc']);
+
+calc.controller('SettingsController', function($scope){
+    $scope.data = $injector.get('data');
+    $scope.dataSource = function(){
+        return $scope.data.toSource();
+    };
+    $injector.get('$rootScope').$on('dataIsReady', function(){
+        $scope.dataLoaded = true;
+        $scope.$apply();
+    });
+});
 calc.controller('CalcController', function ($scope, $cookies) {
     $scope.paneTypeSelector = {
         isOpen: false,
@@ -133,61 +204,7 @@ calc.controller('CalcController', function ($scope, $cookies) {
         $scope.$apply();
     });
 });
-calc.factory('data', function($resource){
-    return $resource('data.php').get(function(){
-        $injector.get('$rootScope').$emit('dataIsReady');
-    });
-});
-calc.factory('profiles', function(){
-    return [
-        {
-            priceCoefficient: 100,
-            name: "0%"
-        },
-        {
-            priceCoefficient: 105,
-            name: "5%"
-        },
-        {
-            priceCoefficient: 110,
-            name: "10%"
-        }
-    ];
-});
-calc.factory('discount', function(){
-    var obj = {
-        calculateDiscount: function(sum) {
-            var discountTable = $injector.get('data').discountTable;
-            var curr = $injector.get('currency');
-            var disc = 0;
-            for (var i in discountTable)
-                if (curr.toRoubles(sum) >= discountTable[i].minSum)
-                    disc = discountTable[i].discount;
-                else break;
-            return { resultingSum: sum * (1-disc/100)
-                    , discount: sum * (disc/100) }
-        }
-    };
-    return obj;
-});
-calc.factory('currency', function(){
-    return{
-        toRoubles: function(usd){
-            return usd * 32;
-        },
-        toUSD: function(rub){
-            return rub * (1/32);
-        }
-    };
-});
-calc.filter('rub', function(){
-    return function(input){
-        var rub = $injector.get('currency').toRoubles(input);
-        rub = Math.round(rub);
-        return rub + "р";
-    }
-});
-var $injector = angular.injector(['Calc']);
+
 
 Window = function(w){
     //this.name = 'Новое окно';
