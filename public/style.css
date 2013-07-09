@@ -33,9 +33,11 @@ td[colspan="3"].windowWidthSelector{ background-image: url("img/arrowH334.png");
 .doorImage {width: 138px; height: 364px; background: url('img/door_h364.png') no-repeat center; }
 .paneType { width: 110px; height: 240px; cursor: pointer; }
 .paneTypeSolid {background-image: url('img/paneSolid_h240.png');}
-.paneTypeRot {background-image: url('img/paneRotL_h240.png');}
-.paneTypeRotdrop {background-image: url('img/paneRotDropL_h240.png');}
-
+.paneTypeRotL {background-image: url('img/paneRotL_h240.png');}
+.paneTypeRotdropL {background-image: url('img/paneRotDropL_h240.png');}
+.paneTypeRotR {background-image: url('img/paneRotR_h240.png');}
+.paneTypeRotdropR {background-image: url('img/paneRotDropR_h240.png');}
+.addRemove { padding:5px; color; red;}
 .dimension {
     width: 40px;
     padding: 0 !important;
@@ -44,6 +46,9 @@ td[colspan="3"].windowWidthSelector{ background-image: url("img/arrowH334.png");
     text-align: center;
 }
 
+td.form-label {
+    text-align: right;
+}
 #productTypeSelector div.item
 {
     text-align: center;
@@ -52,7 +57,6 @@ td[colspan="3"].windowWidthSelector{ background-image: url("img/arrowH334.png");
 }
 #productTypeSelector img
 { border: 1px solid lightgray; }
-
 input.myError { border-color: red; }
 
 .affix {top: 0px;}

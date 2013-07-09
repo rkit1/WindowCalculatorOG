@@ -83,8 +83,9 @@ calc.controller('CalcController', function ($scope, $cookies) {
         close: function(){
             this.isOpen = false;
         },
-        select: function(t){
+        select: function(t, dir){
             this.pane.type = t;
+            this.pane.direction = dir;
             this.pane.net = false;
             this.pane.key = false;
             this.close();
@@ -191,6 +192,34 @@ calc.controller('CalcController', function ($scope, $cookies) {
         for (var i in $scope.windows)
             if ($scope.windows[i].$$errors.hasSome) return true;
         return false;
+    };
+    $scope.paneClassHelper = function(pane){
+        var out = "";
+        switch (pane.type){
+            case 'solid':
+                return 'paneTypeSolid';
+            case 'rot':
+                out += 'paneTypeRot';
+                break;
+            case 'rotdrop':
+                out += 'paneTypeRotdrop';
+                break;
+        }
+        switch (pane.direction){
+            case 'left':
+                out += 'L';
+                break;
+            case 'right':
+                out += 'R';
+                break;
+        }
+        return out
+    };
+    $scope.getPodokonnikPrice = function(w){
+        return $scope.fullTable.podokonnikPrice(w);
+    };
+    $scope.getOtlivPrice = function(w){
+        return $scope.fullTable.otlivPrice(w);
     };
     $scope.dataLoaded = false;
     if ($cookies.windows != null){
@@ -483,21 +512,18 @@ FullTable = function($scope){
         return this.c35()/250;
     };
 
+
+    this.podokonnikPrice = function(w) {
+        if (w.isActuallyWindow())
+            return this.podokonnikiTable[w.podokonniki.type].price[w.podokonniki.madeIn] * w.width / 1000 * 1.3;
+        else return 0;
+    };
     // Подоконники пвх стоимость
     this.i49 = function() {
-        var podokonnikiTotal = [];
-        for (var i = 0; i < this.podokonnikiTable.length; i++)
-            podokonnikiTotal[i] = [0,0];
-        for (i in ws){
-            var w = ws[i];
-            if (w.isActuallyWindow())
-                podokonnikiTotal[w.podokonniki.type][w.podokonniki.madeIn] += (w.width / 1000);
-        }
         var sum = 0;
-        for (i in this.otlivyTable)
-            sum += podokonnikiTotal[i][0] * this.podokonnikiTable[i].price[0]
-                + podokonnikiTotal[i][1] * this.podokonnikiTable[i].price[1];
-        return sum * 1.3;
+        for  (i in ws)
+            sum += this.podokonnikPrice(ws[i]);
+        return sum
     };
     this.podokonnikiTable = [
         { price: [10.8, 17]
@@ -524,20 +550,18 @@ FullTable = function($scope){
             , width:600 }
     ];
 
+
+    this.otlivPrice = function(w){
+        if (w.isActuallyWindow())
+            return this.otlivyTable[w.otlivy.type].price * w.width / 1000 * 1.3;
+        else return 0;
+    };
     // Отливы белые стоимость
     this.i60 = function() {
-        var otlivyTotal = [];
-        for (var i = 0; i < this.podokonnikiTable.length; i++)
-            otlivyTotal[i] = 0;
-        for (var i in ws){
-            var w = ws[i];
-            if (w.isActuallyWindow())
-                otlivyTotal[w.otlivy.type] += (w.width / 1000);
-        }
         var sum = 0;
-        for (var i in this.otlivyTable)
-            sum += otlivyTotal[i] * this.otlivyTable[i].price;
-        return sum * 1.3;
+        for  (i in ws)
+            sum += this.otlivPrice(ws[i]);
+        return sum
     };
     this.otlivyTable = [
         { price: 5
