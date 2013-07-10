@@ -23,7 +23,8 @@ a {cursor: pointer;}
 #productTypeSelector a.selected { text-decoration: underline; }
 
 .paneWidthSelector { background: url('img/arrowH110.png') no-repeat center; text-align: center; }
-.windowWidthSelector { background: no-repeat center;  text-align: center; }
+.windowWidthSelector { background: no-repeat center; height: 22px}
+.windowWidthSelector-input { text-align: center; }
 .windowHeightSelector { background: url('img/arrowV240.png') no-repeat center;}
 td[colspan="1"].windowWidthSelector{ background-image: url("img/arrowH110.png"); }
 td[colspan="2"].windowWidthSelector{ background-image: url("img/arrowH222.png"); }
@@ -37,7 +38,7 @@ td[colspan="3"].windowWidthSelector{ background-image: url("img/arrowH334.png");
 .paneTypeRotdropL {background-image: url('img/paneRotDropL_h240.png');}
 .paneTypeRotR {background-image: url('img/paneRotR_h240.png');}
 .paneTypeRotdropR {background-image: url('img/paneRotDropR_h240.png');}
-.addRemove { padding:5px; color; red;}
+.addRemove { padding:5px; color: red;}
 .dimension {
     width: 40px;
     padding: 0 !important;

@@ -514,7 +514,7 @@ FullTable = function($scope){
 
 
     this.podokonnikPrice = function(w) {
-        if (w.isActuallyWindow())
+        if (w.isActuallyWindow() && w.podokonniki.type >= 0)
             return this.podokonnikiTable[w.podokonniki.type].price[w.podokonniki.madeIn] * w.width / 1000 * 1.3;
         else return 0;
     };
@@ -552,7 +552,7 @@ FullTable = function($scope){
 
 
     this.otlivPrice = function(w){
-        if (w.isActuallyWindow())
+        if (w.isActuallyWindow() && w.otlivy.type >= 0)
             return this.otlivyTable[w.otlivy.type].price * w.width / 1000 * 1.3;
         else return 0;
     };

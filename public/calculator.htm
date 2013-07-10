@@ -102,11 +102,17 @@
                                 <tr>
                                     <td></td>
                                     <td colspan="{{currentWindow.getActivePanes().length}}"
-                                        class="windowWidthSelector"
-                                        ng-class="{true:'myError'}[currentWindow.$$errors.widthError]">
+                                        class="windowWidthSelector-input">
                                         <input type="number" class="dimension" ng-model="currentWindow.width"
                                                ng-change="currentWindow.recalculateWidth()"
                                                ng-class="{myError:currentWindow.$$errors.errors.paneWindowWidthMismatch}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan="{{currentWindow.getActivePanes().length}}"
+                                        class="windowWidthSelector"
+                                        ng-class="{true:'myError'}[currentWindow.$$errors.widthError]">
                                     </td>
                                 </tr>
                                 <tr>
@@ -210,6 +216,7 @@
                                 <td>
                                     <!-- FIXME -->
                                     <select ng-model="currentWindow.podokonniki.type" id="podokonniki">
+                                        <option value="-1">Не нужен</option>
                                         <option value="0">100мм</option>
                                         <option value="1">150мм</option>
                                         <option value="2">200мм</option>
@@ -231,7 +238,7 @@
                                 </td>
                                 <td>
                                     <select ng-model="currentWindow.otlivy.type" id="otlivy">
-                                        <option>Не нужны</option>
+                                        <option value="-1">Не нужен</option>
                                         <option value="0">0-110мм</option>
                                         <option value="1">110-150мм</option>
                                         <option value="2">151-180мм</option>
