@@ -100,26 +100,26 @@
                         <!-- Изображение окна -->
                             <table id="fullWindowImage" ng-show="{'1p': true,'2p': true,'3p': true}[currentWindow.type]">
                                 <tr>
-                                    <td></td>
+                                    <td colspan="2"></td>
                                     <td colspan="{{currentWindow.getActivePanes().length}}"
-                                        class="windowWidthSelector-input">
+                                        class="widthSelector-input">
                                         <input type="number" class="dimension" ng-model="currentWindow.width"
                                                ng-change="currentWindow.recalculateWidth()"
                                                ng-class="{myError:currentWindow.$$errors.errors.paneWindowWidthMismatch}">
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td></td>
+                                    <td colspan="2"></td>
                                     <td colspan="{{currentWindow.getActivePanes().length}}"
                                         class="windowWidthSelector"
                                         ng-class="{true:'myError'}[currentWindow.$$errors.widthError]">
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="windowHeightSelector">
+                                    <td class="heightSelector-input">
                                         <input type="number" class="dimension"
-                                               ng-model="currentWindow.height">
-                                    </td>
+                                               ng-model="currentWindow.height"></td>
+                                    <td class="windowHeightSelector"></td>
                                     <td ng-repeat="pane in currentWindow.getActivePanes()"
                                         title="{{{solid: 'Глухая створка', rot: 'Поворотная створка', rotdrop: 'Поворотно-откидная створка'}[pane.type]}}"
                                         class="paneType {{paneClassHelper(pane)}}" ng-click="paneTypeSelector.open(pane)">
@@ -127,15 +127,19 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td></td>
-                                    <td ng-repeat="pane in currentWindow.getActivePanes()"  class="paneWidthSelector">
+                                    <td colspan="2"></td>
+                                    <td ng-repeat="pane in currentWindow.getActivePanes()" class="paneWidthSelector">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td ng-repeat="pane in currentWindow.getActivePanes()" class="widthSelector-input">
                                         <input type="number" class="dimension" ng-model="pane.width" ng-readonly="$last"
                                                ng-change="currentWindow.recalculateWidth()"
                                                ng-class="{true:'myError'}[currentWindow.$$errors.paneErrors[$index]]">
                                     </td>
-                                </tr>
                                 <tr>
-                                    <td></td>
+                                    <td colspan="2"></td>
                                     <td ng-repeat="pane in currentWindow.getActivePanes()"  class="panesAccessories">
                                         <div ng-show="pane.type=='rot' || pane.type=='rotdrop'" style="text-align: center">
                                             <!--<label><input type="checkbox" ng-model="pane.key"> ручка с ключом</label>-->
@@ -149,16 +153,21 @@
                             <!-- Изображение двери -->
                             <table ng-show="currentWindow.type == 'door'">
                                 <tr>
-                                    <td></td>
-                                    <td class="doorWidthSelector">
+                                    <td colspan="2"></td>
+                                    <td class="widthSelector-input">
                                         <input type="number" class="dimension" ng-model="currentWindow.width">
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="doorHeightSelector">
+                                    <td colspan="2"></td>
+                                    <td class="doorWidthSelector"></td>
+                                </tr>
+                                <tr>
+                                    <td class="heightSelector-input">
                                         <input type="number" class="dimension"
                                                ng-model="currentWindow.height">
                                     </td>
+                                    <td class="doorHeightSelector"></td>
                                     <td class="doorImage"></td>
                                 </tr>
                             </table>
