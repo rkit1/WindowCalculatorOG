@@ -232,7 +232,7 @@
                                         <option value="2">двусторонняя</option>
                                     </select>
                                 </td>
-                                <td></td>
+                                <td>{{prices.laminate(currentWindow) | rub}}</td>
                             </tr>
                             <tr ng-show="currentWindow.isActuallyWindow()">
                                 <td class="form-label">
@@ -307,7 +307,7 @@
                                 <td>
                                     <input type="checkbox" id="montage" ng-model="currentWindow.montage">
                                 </td>
-                                <td></td>
+                                <td>{{prices.montage(currentWindow) | rub}}</td>
                             </tr>
                         </table>
 

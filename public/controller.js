@@ -227,6 +227,12 @@ Prices = function($scope){
     this.otliv = function(w){
         return $scope.fullTable.otlivPrice(w);
     };
+    this.montage = function(w){
+        return $scope.fullTable.montagePrice(w);
+    };
+    this.laminate = function(w){
+        return w.getTable().r21();
+    };
 };
 
 Window = function(w){
@@ -235,6 +241,7 @@ Window = function(w){
     this.panes = [{type:'solid', width:50},{type:'solid', width:50},{type:'solid', width:50}];
     //types: 'solid', 'rot', 'rotdrop'
     this.steklopaket = 1;
+    this.montage = true;
     this.laminate = 0;
     this.profile = 0;
     this.quantity = 1;
@@ -484,11 +491,17 @@ FullTable = function($scope){
 
 
     this.montagePrice = function(w){
-        return w.width * w.height * w.quantity * 40;
+        if (w.montage){
+            return w.getTable().r28() * 40;
+        }
+        return 0;
     };
     // Монтаж
     this.c65 = function(){
-        return 40 * this.i29();
+        var sum = 0;
+        for (var i in ws)
+            sum += this.montagePrice(ws[i]);
+        return sum;
     };
 
     // Доставка
