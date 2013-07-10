@@ -169,25 +169,6 @@ calc.controller('CalcController', function ($scope, $cookies) {
     $scope.stateHelper = function(){
         return angular.toJson($scope.windows, true) + angular.toJson(eval($cookies.windows), true);
     };
-    $scope.getTotalWindowsPrice = function (){
-        $scope.save();
-        return this.fullTable.i31();
-    };
-    $scope.getTotalPrice = function(){
-        return this.fullTable.c76();
-    };
-    $scope.getDiscount = function(){
-        return this.fullTable.discount();
-    };
-    $scope.getWorksPrice = function(){
-        return $scope.fullTable.c69();
-    };
-    $scope.getAccessoryPrice = function(){
-        return $scope.fullTable.c62();
-    };
-    $scope.getPodokonnikyOtlivyPrice = function(){
-        return $scope.fullTable.i62();
-    };
     $scope.hasErrors = function(){
         for (var i in $scope.windows)
             if ($scope.windows[i].$$errors.hasSome) return true;
@@ -215,12 +196,6 @@ calc.controller('CalcController', function ($scope, $cookies) {
         }
         return out
     };
-    $scope.getPodokonnikPrice = function(w){
-        return $scope.fullTable.podokonnikPrice(w);
-    };
-    $scope.getOtlivPrice = function(w){
-        return $scope.fullTable.otlivPrice(w);
-    };
     $scope.dataLoaded = false;
     if ($cookies.windows != null){
         $scope.restore();
@@ -228,12 +203,31 @@ calc.controller('CalcController', function ($scope, $cookies) {
         $scope.fullTable = new FullTable($scope);
     }
     else $scope.reset();
+    $scope.prices = new Prices($scope);
     $injector.get('$rootScope').$on('dataIsReady', function(){
         $scope.dataLoaded = true;
         $scope.$apply();
     });
 });
 
+Prices = function($scope){
+    this.totalWindows = function(){
+        $scope.save();
+        return $scope.fullTable.i31();
+    };
+    this.total = function(){
+        return $scope.fullTable.c76();
+    };
+    this.discount = function(){
+        return $scope.fullTable.discount();
+    };
+    this.podokonnik = function(w){
+        return $scope.fullTable.podokonnikPrice(w);
+    };
+    this.otliv = function(w){
+        return $scope.fullTable.otlivPrice(w);
+    };
+};
 
 Window = function(w){
     //this.name = 'Новое окно';
@@ -488,6 +482,10 @@ FullTable = function($scope){
         return s;
     };
 
+
+    this.montagePrice = function(w){
+        return w.width * w.height * w.quantity * 40;
+    };
     // Монтаж
     this.c65 = function(){
         return 40 * this.i29();
