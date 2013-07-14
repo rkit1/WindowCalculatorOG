@@ -191,15 +191,16 @@
 
 
 
-                        <table>
+                        <table id="options">
+                            <tbody>
                             <tr>
-                                <td class="form-label">
+                                <td>
                                     <label for="profile">Профиль</label>
                                 </td>
                                 <td>
                                     <!-- FIXME расценка -->
                                     <select ng-model="currentWindow.profile" id="profile"
-                                            class="span2">
+                                            class="span3">
                                         <option value="0">Montblank</option>
                                         <option value="1">Rehau</option>
                                         <option value="2">Veka</option>
@@ -208,12 +209,12 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <td class="form-label">
+                                <td>
                                     <label for="steklopaket">Стеклопакет</label>
                                 </td>
                                 <td>
                                     <select ng-model="currentWindow.steklopaket" id="steklopaket"
-                                            class="span2">
+                                            class="span3">
                                         <option value="1">Однокамерный</option>
                                         <option value="2">Двухкамерный</option>
                                     </select>
@@ -221,12 +222,12 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <td class="form-label">
+                                <td>
                                     <label for="laminate">Ламинация</label>
                                 </td>
                                 <td>
                                     <select ng-model="currentWindow.laminate" id="laminate"
-                                            class="span2">
+                                            class="span3">
                                         <option value="0">нет</option>
                                         <option value="1">односторонняя</option>
                                         <option value="2">двусторонняя</option>
@@ -235,13 +236,13 @@
                                 <td>{{prices.laminate(currentWindow) | rub}}</td>
                             </tr>
                             <tr ng-show="currentWindow.isActuallyWindow()">
-                                <td class="form-label">
+                                <td>
                                     <label for="podokonniki">Подоконник</label>
                                 </td>
                                 <td>
                                     <!-- FIXME -->
                                     <select ng-model="currentWindow.podokonniki.type" id="podokonniki"
-                                            class="span2">
+                                            class="span3">
                                         <option value="-1">Не нужен</option>
                                         <option value="0">100мм</option>
                                         <option value="1">150мм</option>
@@ -259,12 +260,12 @@
                                 <td>{{prices.podokonnik(currentWindow) | rub}}</td>
                             </tr>
                             <tr ng-show="currentWindow.isActuallyWindow()">
-                                <td class="form-label">
+                                <td>
                                     <label for="otlivy">Отлив</label>
                                 </td>
                                 <td>
                                     <select ng-model="currentWindow.otlivy.type" id="otlivy"
-                                            class="span2">
+                                            class="span3">
                                         <option value="-1">Не нужен</option>
                                         <option value="0">0-110мм</option>
                                         <option value="1">110-150мм</option>
@@ -280,12 +281,12 @@
                                 <td>{{prices.otliv(currentWindow) | rub}}</td>
                             </tr>
                             <tr>
-                                <td class="form-label">
+                                <td>
                                     <label for="otkosy">Откосы</label>
                                 </td>
                                 <td>
                                     <select ng-model="currentWindow.otkosy.type" id="otkosy"
-                                            class="span2">
+                                            class="span3">
                                         <option value="-1">Не нужны</option>
                                         <option value="0">0-110мм</option>
                                         <option value="1">110-150мм</option>
@@ -301,14 +302,19 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <td class="form-label">
+                                <td>
                                     <label for="montage">Монтаж</label>
                                 </td>
                                 <td>
-                                    <input type="checkbox" id="montage" ng-model="currentWindow.montage">
+                                    <select ng-model="currentWindow.montage" id="montage"
+                                            class="span3">
+                                        <option value="0">Не нужен</option>
+                                        <option value="1">Нужен</option>
+                                    </select>
                                 </td>
                                 <td>{{prices.montage(currentWindow) | rub}}</td>
                             </tr>
+                            </tbody>
                         </table>
 
 
@@ -352,12 +358,12 @@
         </div>
     </div>
     <div modal="paneTypeSelector.isOpen" close="paneTypeSelector.close()"
-         options="paneTypeSelector.options" style="width: 90% !important;">
+         options="paneTypeSelector.options">
         <div class="modal-header">
             <h4>Тип створки:
                 {{{solid: 'глухая', rot: 'поворотная', rotdrop: 'поворотно-откидная'}[paneTypeSelector.hoverType]}}</h4>
         </div>
-        <div class="modal-body">
+        <div class="modal-body"  id="paneTypeSelector">
             <ul class="thumbnails">
                 <li>
                     <a class="thumbnail" ng-click="paneTypeSelector.select('solid')"

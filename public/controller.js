@@ -241,18 +241,21 @@ Window = function(w){
     this.panes = [{type:'solid', width:50},{type:'solid', width:50},{type:'solid', width:50}];
     //types: 'solid', 'rot', 'rotdrop'
     this.steklopaket = 1;
-    this.montage = true;
+    this.montage = 0;
     this.laminate = 0;
     this.profile = 0;
     this.quantity = 1;
-    this.podokonniki = {madeIn: 0, type: 0};
-    this.otlivy = {type:0};
+    this.podokonniki = {madeIn: 0, type: -1};
+    this.otlivy = {type:-1};
+    this.otkosy = {type:-1};
     this.setType('1p');
     this.checkSizeErrors();
     return this;
 };
+
 Window.prototype.getTable = function(){
-    return new PerWindowTable(this);
+    if (this.perWindowTable.constructor != "PerWindowTable") this.perWindowTable = new PerWindowTable(this);
+    return this.perWindowTable;
 };
 Window.prototype.getPanesCount = function(){
     switch (this.type)
@@ -345,27 +348,42 @@ PerWindowTable = function(w){
 
     var profiles = $injector.get('profiles');
 
-    // Ширина рамы
+    /**
+     * Ширина рамы
+     * @returns Number
+     */
     this.r8 = function() {
         return w.width;
     };
 
-    // Высота рамы
+    /**
+     * Высота рамы
+     * @returns Number
+     */
     this.r9 = function() {
         return w.height;
     };
 
-    // Общая длина импостов
+    /**
+     * Общая длина импостов
+     * @returns {number}
+     */
     this.r10 = function() {
         return (w.getPanesCount() - 1) * this.r9();
     };
 
-    // Общая длина штульпов. Не используется.
+    /**
+     * Общая длина штульпов. Не используется.
+     * @returns {number}
+     */
     this.r11 = function() {
         return 0;
     };
 
-    // Общая ширина створок и фрамуг. Фрамуги не учитываются.
+    /**
+     * Общая ширина створок и фрамуг. Фрамуги не учитываются.
+     * @returns {number}
+     */
     this.r12 = function() {
         var panes = w.getActivePanes();
         var r = 0;
@@ -376,12 +394,18 @@ PerWindowTable = function(w){
         return r;
     };
 
-    // Высота фрамуги или глухой части Т-обр. окна. Не ипользуется.
+    /**
+     * Высота фрамуги или глухой части Т-обр. окна. Не ипользуется.
+     * @returns {number}
+     */
     this.r13 = function() {
         return 0;
     };
 
-    // Количество поворотных створок
+    /**
+     * Количество поворотных створок
+     * @returns {number}
+     */
     this.r14 = function() {
         var panes =  w.getActivePanes();
         var c = 0;
@@ -390,7 +414,10 @@ PerWindowTable = function(w){
         return c;
     };
 
-    // Количество поворотно-откидных створок
+    /**
+     * Количество поворотно-откидных створок
+     * @returns {number}
+     */
     this.r15 = function() {
         var panes =  w.getActivePanes();
         var c = 0;
@@ -399,69 +426,110 @@ PerWindowTable = function(w){
         return c;
     };
 
-    // Количество фрамуг
+    /**
+     * Количество фрамуг
+     * @returns {number}
+     */
     this.r16 = function() {
         return 0;
     };
 
-    // Надбавка за с/п (по прайс-листу). FIXME разобраться с реальным числом.
+    /**
+     * Надбавка за с/п (по прайс-листу). FIXME разобраться с реальным числом.
+     * @returns {number}
+     */
     this.r17 = function() {
         return 20;
     };
 
-    // Сэндвич (высота до импоста). Не используется.
+    /**
+     * Сэндвич (высота до импоста). Не используется.
+     * @returns {number}
+     */
     this.r18 = function() {
         return 0;
     };
 
-    // Цвет сэндвича  (б/б - 50,  б/ц - 70,  ц/ц - 130). Не используется.
+    /**
+     * Цвет сэндвича  (б/б - 50,  б/ц - 70,  ц/ц - 130). Не используется.
+     * @returns {number}
+     */
     this.r19 = function() {
         return 0;
     };
 
-    // Арка (глухая - 40, распашная - 80). Не используется.
+    /**
+     * Арка (глухая - 40, распашная - 80). Не используется.
+     * @returns {number}
+     */
     this.r20 = function() {
         return 0;
     };
 
-    // Ламинация (одна сторона - 45, две -  90)
+    /**
+     * Ламинация (одна сторона - 45, две -  90)
+     * @returns {number}
+     */
     this.r21 = function() {
         return w.laminate * 45;
     };
 
-    // Стоимость
+
+    /**
+     * Стоимость
+     * @returns {number}
+     */
     this.r22 = function() {
         return this.r23() * 1.3 * (profiles[w.profile].priceCoefficient / 100);
     };
 
-    // Стоимость (скрытая колонка).
+    /**
+     * Стоимость (скрытая колонка).
+     * @returns {number}
+     */
     this.r23 = function() {
         if (w.type=='door') return ((this.r8()+this.r9())*2*9*(1+this.r21()/100)/1000+47*(this.r8()*this.r9())/1000000+this.r10()*14*(1+this.r21()/100)/1000+this.r11()*18*(1+this.r21()/100)/1000+(this.r12()*2+(this.r14()+this.r15())*(this.r9()-this.r13())*2+this.r16()*this.r13()*2)*9*(1+this.r21()/100)/1000+this.r14()*70+this.r15()*85+this.r16()*45)+(this.r8()*this.r9())*this.r17()/1000000+this.r8()*this.r18()*this.r19()/1000000-this.r8()*this.r18()*(47+this.r17())/1000000+this.r8()/1000*this.r20();
         else return ((this.r8()+this.r9())*2*9*(1+this.r21()/100)/1000+47*(this.r8()*this.r9())/1000000+this.r10()*14*(1+this.r21()/100)/1000+this.r11()*18*(1+this.r21()/100)/1000+(this.r12()*2+(this.r14()+this.r15())*(this.r9()-this.r13())*2+this.r16()*this.r13()*2)*9*(1+this.r21()/100)/1000+this.r14()*50+this.r15()*62+this.r16()*45)+(this.r8()*this.r9())*this.r17()/1000000+this.r8()*this.r18()*this.r19()/1000000-this.r8()*this.r18()*(47+this.r17())/1000000+this.r8()/1000*this.r20();
     };
 
-    // ПЛОЩАДЬ
+    /**
+     * ПЛОЩАДЬ
+     * @returns {number}
+     */
     this.r24 = function() {
         return this.r8() * this.r9() / 1000000
     };
 
 
-    // Количество изделий
+    /**
+     * Количество изделий
+     * @returns {*}
+     */
     this.r27 = function() {
         return w.quantity;
     };
 
-    // Площадь изделий
+    /**
+     * Площадь изделий
+     * @returns {number}
+     */
     this.r28 = function() {
         return this.r24() * this.r27()
     };
 
 
-    // Общая стоимость изделий
+    /**
+     * Общая стоимость изделий
+     * @returns {number}
+     */
     this.r30 = function(){
         return this.r22() * this.r27();
     };
 
+    /**
+     * Подоконный  профиль пог.мм.
+     * @returns Number
+     */
     this.r32 = function(){
         return w.width;
     };
@@ -491,7 +559,7 @@ FullTable = function($scope){
 
 
     this.montagePrice = function(w){
-        if (w.montage){
+        if (w.montage == 1){
             return w.getTable().r28() * 40;
         }
         return 0;
