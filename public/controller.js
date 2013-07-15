@@ -540,68 +540,103 @@ FullTable = function($scope){
     var ws = $scope.windows;
     var discount = $injector.get('discount');
 
-    // ОБЩАЯ ПЛОЩАДЬ
+    /**
+     * ОБЩАЯ ПЛОЩАДЬ
+     */
     this.i29 = function(){
         var r = 0;
-        for (var i in ws)
-            r += ws[i].getTable().r28();
-        return r;
+        angular.forEach(ws, function(w){
+                r += w.getTable().r28();
+        });
     };
 
 
-    // Общая стоимость изделий
+    /**
+     * Общая стоимость изделий
+     * @returns {number}
+     */
     this.i31 = function(){
         var s = 0;
-        for (var i in ws)
-            s += ws[i].getTable().r30();
+        angular.forEach(ws,function(w){
+            s += w.getTable().r30();
+        });
         return s;
     };
 
 
+    /**
+     * @param w окно
+     * @returns {number}
+     */
     this.montagePrice = function(w){
         if (w.montage == 1){
             return w.getTable().r28() * 40;
         }
         return 0;
     };
-    // Монтаж
+    /**
+     * Монтаж
+     * @returns {number}
+     */
     this.c65 = function(){
         var sum = 0;
-        for (var i in ws)
-            sum += this.montagePrice(ws[i]);
+        var ft = this; //FIXME
+        angular.forEach(ws,function(w){
+            sum += ft.montagePrice(w);
+        });
         return sum;
     };
 
-    // Доставка
+
+    /**
+     * Доставка
+     * @returns {number}
+     */
     this.c66 = function(){
         return 60;
     };
 
-    // Подоконный профиль пог. мм
+    /**
+     *  Подоконный профиль пог. мм
+     * @returns {number}
+     */
     this.c35 = function(){
         var r = 0;
-        for (var i in ws)
-            if (ws[i].type == '1p' || ws[i].type == '2p' || ws[i].type == '3p' )
-                r += ws[i].getTable().r32();
+        angular.forEach(ws,function(w){
+            if (w.isActuallyWindow())
+                r += w.getTable().r32();
+        });
         return r;
     };
 
-    // Подоконный профиль
+    /**
+     * Подоконный профиль
+     * @returns {number}
+     */
     this.c36 = function (){
         return this.c35()/250;
     };
 
 
+    /**
+     * @param w окно
+     * @returns {number}
+     */
     this.podokonnikPrice = function(w) {
         if (w.isActuallyWindow() && w.podokonniki.type >= 0)
             return this.podokonnikiTable[w.podokonniki.type].price[w.podokonniki.madeIn] * w.width / 1000 * 1.3;
         else return 0;
     };
-    // Подоконники пвх стоимость
+    /**
+     * Подоконники пвх стоимость
+     * @returns {number}
+     */
     this.i49 = function() {
         var sum = 0;
-        for  (i in ws)
-            sum += this.podokonnikPrice(ws[i]);
+        var ft = this; // FIXME
+        angular.forEach(ws,function(w){
+            ft.podokonnikPrice(w);
+        });
         return sum
     };
     this.podokonnikiTable = [
@@ -630,16 +665,25 @@ FullTable = function($scope){
     ];
 
 
+    /**
+     * @param w окно
+     * @returns {number}
+     */
     this.otlivPrice = function(w){
         if (w.isActuallyWindow() && w.otlivy.type >= 0)
             return this.otlivyTable[w.otlivy.type].price * w.width / 1000 * 1.3;
         else return 0;
     };
-    // Отливы белые стоимость
+    /**
+     * Отливы белые стоимость
+     * @returns {number}
+     */
     this.i60 = function() {
         var sum = 0;
-        for  (i in ws)
-            sum += this.otlivPrice(ws[i]);
+        var ft = this;
+        angular.forEach(ws,function(w){
+            sum += ft.otlivPrice(w);
+        });
         return sum
     };
     this.otlivyTable = [
@@ -663,56 +707,82 @@ FullTable = function($scope){
             , width: "341-420мм"}
     ];
 
-    // Москитная сетка площадь m^2
+    /**
+     * Москитная сетка площадь m^2
+     * @returns {number}
+     */
     this.c54 = function(){
         var r = 0;
-        for (var i in ws)
-            if (ws[i].type == '1p' || ws[i].type == '2p' || ws[i].type == '3p' ){
-                ps = ws[i].getActivePanes();
-                for (var k in ps)
-                    if (ps[k].net) r += (ps[k].width * ws[i].height / 1000000)
-            }
+        angular.forEach(ws,function(w){
+            if (w.isActuallyWindow())
+                angular.forEach(w.getActivePanes(), function(p){
+                    if (p.net) r += (p.width * w.height / 1000000)
+                });
+        });
         return r;
     };
 
-    // Москитная сетка стоимость
+    /**
+     * Москитная сетка стоимость
+     * @returns {number}
+     */
     this.c55 = function(){
         return this.c54() * 35;
     };
 
-    // Общая стоимость аксессуаров
+    /**
+     * Общая стоимость аксессуаров
+     * @returns {number}
+     */
     this.c62 = function(){
         return (this.c55() + this.c36()) * 1.3;
     };
 
-
-    //ВСЕГО Подоконники и отливы:
+    /**
+     * ВСЕГО Подоконники и отливы:
+     * @returns {number}
+     */
     this.i62 = function(){
         return this.i49() + this.i60();
     };
 
-    // Общая стоимость работ
+    /**
+     * Общая стоимость работ
+     * @returns {number}
+     */
     this.c69 = function() {
         return this.c65() + this.c66();
     };
 
-    // Итого к оплате помощник
+    /**
+     * Итого к оплате помощник
+     * @returns {number}
+     */
     this.c76_pre = function(){
         return this.i31() + this.c62() +  this.i62();
     };
 
 
-    // Откосы пвх
+    /**
+     * Откосы пвх
+     * @returns {number}
+     */
     this.c70 = function(){
         return 0; //fixme
     };
 
-    // Итого к оплате
+    /**
+     * Итого к оплате
+     * @returns {number}
+     */
     this.c76 = function(){
         return discount.calculateDiscount(this.c76_pre()).resultingSum + this.c69() + this.c70();
     };
 
-    // Сумма скидки
+    /**
+     * Сумма скидки
+     * @returns {Number}
+     */
     this.discount = function(){
         return discount.calculateDiscount(this.c76_pre()).discount;
     };
