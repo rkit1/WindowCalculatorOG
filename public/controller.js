@@ -48,12 +48,6 @@ calc.factory('currency', function(){
         }
     };
 });
-//TODO
-calc.factory('discountParser', function(){
-    return function(str){
-        var r = new RegExp(/[0-9]+ [0-9]+/);
-    };
-});
 calc.filter('rub', function(){
     return function(input){
         var rub = $injector.get('currency').toRoubles(input);
@@ -62,17 +56,6 @@ calc.filter('rub', function(){
     }
 });
 var $injector = angular.injector(['Calc']);
-
-calc.controller('SettingsController', function($scope){
-    $scope.data = $injector.get('data');
-    $scope.dataSource = function(){
-        return $scope.data.toSource();
-    };
-    $injector.get('$rootScope').$on('dataIsReady', function(){
-        $scope.dataLoaded = true;
-        $scope.$apply();
-    });
-});
 calc.controller('CalcController', function ($scope, $cookies) {
     //noinspection JSUnusedGlobalSymbols
     $scope.paneTypeSelector = {
