@@ -21,22 +21,24 @@ calc.factory('profiles', function(){
     ];
 });
 calc.factory('discount', function(){
-    var obj = {
+    return {
         calculateDiscount: function(sum) {
-            var discountTable = $injector.get('data').discountTable;
-            var curr = $injector.get('currency');
             var disc = 0;
-            for (var i in discountTable)
-                if (curr.toRoubles(sum) >= discountTable[i].minSum)
-                    disc = discountTable[i].discount;
-                else break;
+            if ($injector.get('data').discountTable){
+                var discountTable = $injector.get('data').discountTable;
+                var curr = $injector.get('currency');
+                for (var i = 0; i < discountTable.length; i++ )
+                    if (curr.toRoubles(sum) >= discountTable[i].minSum)
+                        disc = discountTable[i].discount;
+                    else break;
+            }
             return { resultingSum: sum * (1-disc/100)
                 , discount: sum * (disc/100) }
         }
     };
-    return obj;
 });
 calc.factory('currency', function(){
+    //noinspection JSUnusedGlobalSymbols,JSUnusedGlobalSymbols
     return{
         toRoubles: function(usd){
             return usd * 32;
@@ -85,18 +87,8 @@ calc.filter('rub', function(){
     }
 });
 var $injector = angular.injector(['Calc']);
-
-calc.controller('SettingsController', function($scope){
-    $scope.data = $injector.get('data');
-    $scope.dataSource = function(){
-        return $scope.data.toSource();
-    };
-    $injector.get('$rootScope').$on('dataIsReady', function(){
-        $scope.dataLoaded = true;
-        $scope.$apply();
-    });
-});
 calc.controller('CalcController', function ($scope, $cookies) {
+    //noinspection JSUnusedGlobalSymbols
     $scope.paneTypeSelector = {
         isOpen: false,
         pane: null,
@@ -184,19 +176,19 @@ calc.controller('CalcController', function ($scope, $cookies) {
     $scope.restore = function(){
         var data = eval($cookies.windows);
         $scope.windows = [];
-        for (var i in data) {
+        angular.forEach(data, function(d){
             var w = new Window();
-            for (var k in data[i])
-                if (data[i].hasOwnProperty(k)) w[k] = data[i][k];
+            for (var k in d)
+                if (d.hasOwnProperty(k)) w[k] = d[k];
             w.checkSizeErrors();
             $scope.windows[$scope.windows.length] = w;
-        }
+        });
     };
     $scope.stateHelper = function(){
         return angular.toJson($scope.windows, true) + angular.toJson(eval($cookies.windows), true);
     };
     $scope.hasErrors = function(){
-        for (var i in $scope.windows)
+        for (var i = 0; i < $scope.windows.length; i++ )
             if ($scope.windows[i].$$errors.hasSome) return true;
         return false;
     };
@@ -237,19 +229,23 @@ calc.controller('CalcController', function ($scope, $cookies) {
 });
 
 Prices = function($scope){
+    //noinspection JSUnusedGlobalSymbols
     this.totalWindows = function(){
         $scope.save();
         return $scope.fullTable.i31();
     };
+    //noinspection JSUnusedGlobalSymbols
     this.total = function(){
         return $scope.fullTable.c76();
     };
     this.discount = function(){
         return $scope.fullTable.discount();
     };
+    //noinspection JSUnusedGlobalSymbols
     this.podokonnik = function(w){
         return $scope.fullTable.podokonnikPrice(w);
     };
+    //noinspection JSUnusedGlobalSymbols
     this.otliv = function(w){
         return $scope.fullTable.otlivPrice(w);
     };
@@ -266,6 +262,7 @@ Window = function(w){
     // 1p, 2p, 3p, door
     this.panes = [{type:'solid', width:50},{type:'solid', width:50},{type:'solid', width:50}];
     //types: 'solid', 'rot', 'rotdrop'
+    //noinspection JSUnusedGlobalSymbols
     this.steklopaket = 1;
     this.montage = 0;
     this.laminate = 0;
@@ -273,15 +270,16 @@ Window = function(w){
     this.quantity = 1;
     this.podokonniki = {madeIn: 0, type: -1};
     this.otlivy = {type:-1};
+    //noinspection JSUnusedGlobalSymbols
     this.otkosy = {type:-1};
     this.setType('1p');
     this.checkSizeErrors();
     return this;
 };
 
+// FIXME РАЗОБРАТЬСЯ, БЛЯДЬ, УЖЕ
 Window.prototype.getTable = function(){
-    if (this.perWindowTable.constructor != "PerWindowTable") this.perWindowTable = new PerWindowTable(this);
-    return this.perWindowTable;
+    return new PerWindowTable(this);
 };
 Window.prototype.getPanesCount = function(){
     switch (this.type)
@@ -296,12 +294,15 @@ Window.prototype.getActivePanes = function(){
     if (this.type == 'door') return [];
     return this.panes.slice(0, this.getPanesCount());
 };
+//noinspection JSUnusedGlobalSymbols
 Window.prototype.getSinglePrice = function(){
     return this.getTable().r22();
 };
+//noinspection JSUnusedGlobalSymbols
 Window.prototype.getTotalPrice = function(){
     return this.getTable().r30();
 };
+//noinspection JSUnusedGlobalSymbols
 Window.prototype.recalculateWidth = function(){
     var w = this.width;
     var panes = this.getActivePanes();
@@ -343,8 +344,7 @@ Window.prototype.setType = function(t){
 Window.prototype.checkSizeErrors = function(){
     var ps = this.getActivePanes();
     var out = {errors: {}, paneErrors: []};
-    for (var i in ps)
-    {
+    for (var i = 0; i < ps.length; i++) {
         if (ps[i].width < 100)
         {
             out.errors.paneTooSmall = true;
@@ -360,6 +360,7 @@ Window.prototype.checkSizeErrors = function(){
     this.$$errors = out;
 };
 Window.prototype.isActuallyWindow = function(){
+    //noinspection FallthroughInSwitchStatementJS
     switch (this.type){
         case '1p':
         case '2p':
@@ -413,10 +414,9 @@ PerWindowTable = function(w){
     this.r12 = function() {
         var panes = w.getActivePanes();
         var r = 0;
-        for (var i in panes) {
-            pane = panes[i];
+        angular.forEach(panes, function(pane){
             if (pane.type == 'rot' || pane.type == 'rotdrop') r += pane.width;
-        }
+        });
         return r;
     };
 
@@ -435,8 +435,9 @@ PerWindowTable = function(w){
     this.r14 = function() {
         var panes =  w.getActivePanes();
         var c = 0;
-        for (var i in panes)
-            if (panes[i].type == 'rot') c++;
+        angular.forEach(panes, function(p){
+            if (p.type == 'rot') c++;
+        });
         return c;
     };
 
@@ -447,8 +448,9 @@ PerWindowTable = function(w){
     this.r15 = function() {
         var panes =  w.getActivePanes();
         var c = 0;
-        for (var i in panes)
-            if (panes[i].type == 'rotdrop') c++;
+        angular.forEach(panes, function(p){
+            if (p.type == 'rotdrop') c++;
+        });
         return c;
     };
 
@@ -566,6 +568,7 @@ FullTable = function($scope){
     var ws = $scope.windows;
     var discount = $injector.get('discount');
 
+    //noinspection JSUnusedGlobalSymbols
     /**
      * ОБЩАЯ ПЛОЩАДЬ
      */
