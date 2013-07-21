@@ -33,7 +33,7 @@ calc.factory('discount', function(){
                     else break;
             }
             return { resultingSum: sum * (1-disc/100)
-                , discount: sum * (disc/100) }
+                   , discount: sum * (disc/100) }
         }
     };
 });
@@ -432,11 +432,13 @@ PerWindowTable = function(w){
     };
 
     /**
-     * Надбавка за с/п (по прайс-листу). FIXME разобраться с реальным числом.
+     * Надбавка за стеклопакет
+     * 1)По цене на стеклопакеты, если однокамерный стеклапакет то ставим надбавку 20,
+     * если двухкамерный то 30
      * @returns {number}
      */
     this.r17 = function() {
-        return 20;
+        return w.steklopaket * 10 + 10;
     };
 
     /**
