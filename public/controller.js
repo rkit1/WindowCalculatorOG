@@ -224,6 +224,9 @@ Prices = function($scope){
     this.laminate = function(w){
         return w.getTable().r21();
     };
+    this.otkosy = function(w){
+        return $scope.fullTable.otkosyPrice(w)
+    };
 };
 
 Window = function(w){
@@ -247,6 +250,9 @@ Window = function(w){
 };
 
 // FIXME РАЗОБРАТЬСЯ, БЛЯДЬ, УЖЕ
+/**
+ * @returns {PerWindowTable}
+ */
 Window.prototype.getTable = function(){
     return new PerWindowTable(this);
 };
@@ -768,8 +774,21 @@ FullTable = function($scope){
      * @returns {number}
      */
     this.c70 = function(){
-        return 0; //fixme
+        var out = 0;
+        var ft = this;
+        angular.forEach(ws, function(w){
+            out += ft.otkosyPrice(w);
+        });
+        return out;
     };
+    this.otkosyPrice = function (w) {
+        if (!w.isActuallyWindow() || w.otkosy.type == -1) return 0;
+        var length = (w.width + w.height * 2) / 10000;
+        return length * this.otkosyTable[w.otkosy.type];
+    };
+    this.otkosyTable = [
+        23, 28, 35, 38
+    ];
 
     /**
      * Итого к оплате

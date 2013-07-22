@@ -288,18 +288,13 @@
                                     <select ng-model="currentWindow.otkosy.type" id="otkosy"
                                             class="span3">
                                         <option value="-1">Не нужны</option>
-                                        <option value="0">0-110мм</option>
-                                        <option value="1">110-150мм</option>
-                                        <option value="2">151-180мм</option>
-                                        <option value="3">181-200мм</option>
-                                        <option value="4">201-206мм</option>
-                                        <option value="5">261-280мм</option>
-                                        <option value="6">281-310мм</option>
-                                        <option value="7">311-340мм</option>
-                                        <option value="8">341-420мм</option>
+                                        <option value="0">до 25 см</option>
+                                        <option value="1">до 35 см</option>
+                                        <option value="2">до 45 см</option>
+                                        <option value="3">до 60 см</option>
                                     </select>
                                 </td>
-                                <td></td>
+                                <td>{{prices.otkosy(currentWindow) | rub}}</td>
                             </tr>
                             <tr>
                                 <td>
