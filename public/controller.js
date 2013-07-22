@@ -8,15 +8,15 @@ calc.factory('profiles', function(){
     return [
         {
             priceCoefficient: 100,
-            name: "0%"
+            name: "Veka"
         },
         {
-            priceCoefficient: 105,
-            name: "5%"
+            priceCoefficient: 97,
+            name: "Rehau"
         },
         {
-            priceCoefficient: 110,
-            name: "10%"
+            priceCoefficient: 93,
+            name: "Montblanc"
         }
     ];
 });
