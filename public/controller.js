@@ -195,6 +195,8 @@ calc.controller('CalcController', function ($scope, $cookies) {
         $scope.dataLoaded = true;
         $scope.$apply();
     });
+    // form, order
+    $scope.s.state = "form";
 });
 
 Prices = function($scope){

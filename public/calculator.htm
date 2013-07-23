@@ -31,7 +31,7 @@
     </div>
 </div>
 <div ng-controller="CalcController" class="container" id="ctrl">
-    <div>
+    <div ng-show="s.state == 'form'">
         <div class="row">
             <div class="span8">
                 <ul class="nav nav-tabs">
@@ -187,10 +187,6 @@
 
                         <br>
 
-
-
-
-
                         <table id="options">
                             <tbody>
                             <tr>
@@ -345,6 +341,9 @@
         </div>
     </div>
 
+    <div ng-show="s.state == 'order'">
+
+    </div>
     <div modal="confirm.isOpen" close="confirm.close()" options="confirm.options">
         <div class="modal-header">{{confirm.message}}</div>
         <div class="modal-footer">
@@ -397,10 +396,7 @@
                     >Отмена</button>
         </div>
     </div>
-    <!--
-    <pre>
-    {{stateHelper()}}
-        </pre>-->
+
 </div>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
