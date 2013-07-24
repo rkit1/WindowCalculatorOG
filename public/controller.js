@@ -284,103 +284,105 @@ Window = function(w){
     this.checkSizeErrors();
     return this;
 };
-
-// FIXME РАЗОБРАТЬСЯ, БЛЯДЬ, УЖЕ
-/**
- * @returns {PerWindowTable}
- */
-Window.prototype.getTable = function(){
-    return new PerWindowTable(this);
-};
-Window.prototype.getPanesCount = function(){
-    switch (this.type)
-    {
-        case '1p': return 1;
-        case '2p': return 2;
-        case '3p': return 3;
-    }
-    return 1;
-};
-Window.prototype.getActivePanes = function(){
-    if (this.type == 'door') return [];
-    return this.panes.slice(0, this.getPanesCount());
-};
-//noinspection JSUnusedGlobalSymbols
-Window.prototype.getSinglePrice = function(){
-    return this.getTable().r22();
-};
-//noinspection JSUnusedGlobalSymbols
-Window.prototype.getTotalPrice = function(){
-    return this.getTable().r30();
-};
-//noinspection JSUnusedGlobalSymbols
-Window.prototype.recalculateWidth = function(){
-    var w = this.width;
-    var panes = this.getActivePanes();
-    for (var i = 0; i < panes.length - 1; i++)
-        w -= panes[i].width;
-    panes[panes.length - 1].width = w;
-    this.checkSizeErrors();
-};
-Window.prototype.setType = function(t){
-    switch (t){
-        case '1p':
-            this.type = t;
-            this.panes[0] = {type: 'solid', width: 800};
-            this.width = 800;
-            this.height = 1500;
-            break;
-        case '2p':
-            this.type = t;
-            this.panes[0] = {type: 'solid', width: 750};
-            this.panes[1] = {type: 'solid', width: 750};
-            this.width = 1500;
-            this.height = 1500;
-            break;
-        case '3p':
-            this.type = t;
-            this.panes[0] = {type: 'solid', width: 700};
-            this.panes[1] = {type: 'solid', width: 700};
-            this.panes[2] = {type: 'solid', width: 700};
-            this.width = 2100;
-            this.height = 1500;
-            break;
-        case 'door':
-            this.type = t;
-            this.width = 700;
-            this.height = 2200;
-            break;
-    }
-};
-Window.prototype.checkSizeErrors = function(){
-    var ps = this.getActivePanes();
-    var out = {errors: {}, paneErrors: []};
-    for (var i = 0; i < ps.length; i++) {
-        if (ps[i].width < 100)
+(function(p){
+    // FIXME РАЗОБРАТЬСЯ, БЛЯДЬ, УЖЕ
+    /**
+     * @returns {PerWindowTable}
+     */
+    p.getTable = function(){
+        return new PerWindowTable(this);
+    };
+    p.getPanesCount = function(){
+        switch (this.type)
         {
-            out.errors.paneTooSmall = true;
-            out.paneErrors[i] = true;
-            out.hasSome = true;
-            if (ps[i].width < 0)
+            case '1p': return 1;
+            case '2p': return 2;
+            case '3p': return 3;
+        }
+        return 1;
+    };
+    p.getActivePanes = function(){
+        if (this.type == 'door') return [];
+        return this.panes.slice(0, this.getPanesCount());
+    };
+//noinspection JSUnusedGlobalSymbols
+    p.getSinglePrice = function(){
+        return this.getTable().r22();
+    };
+//noinspection JSUnusedGlobalSymbols
+    p.getTotalPrice = function(){
+        return this.getTable().r30();
+    };
+//noinspection JSUnusedGlobalSymbols
+    p.recalculateWidth = function(){
+        var w = this.width;
+        var panes = this.getActivePanes();
+        for (var i = 0; i < panes.length - 1; i++)
+            w -= panes[i].width;
+        panes[panes.length - 1].width = w;
+        this.checkSizeErrors();
+    };
+    p.setType = function(t){
+        switch (t){
+            case '1p':
+                this.type = t;
+                this.panes[0] = {type: 'solid', width: 800};
+                this.width = 800;
+                this.height = 1500;
+                break;
+            case '2p':
+                this.type = t;
+                this.panes[0] = {type: 'solid', width: 750};
+                this.panes[1] = {type: 'solid', width: 750};
+                this.width = 1500;
+                this.height = 1500;
+                break;
+            case '3p':
+                this.type = t;
+                this.panes[0] = {type: 'solid', width: 700};
+                this.panes[1] = {type: 'solid', width: 700};
+                this.panes[2] = {type: 'solid', width: 700};
+                this.width = 2100;
+                this.height = 1500;
+                break;
+            case 'door':
+                this.type = t;
+                this.width = 700;
+                this.height = 2200;
+                break;
+        }
+    };
+    p.checkSizeErrors = function(){
+        var ps = this.getActivePanes();
+        var out = {errors: {}, paneErrors: []};
+        for (var i = 0; i < ps.length; i++) {
+            if (ps[i].width < 100)
             {
-                out.errors.paneWindowWidthMismatch = true;
-                out.widthError = true;
+                out.errors.paneTooSmall = true;
+                out.paneErrors[i] = true;
+                out.hasSome = true;
+                if (ps[i].width < 0)
+                {
+                    out.errors.paneWindowWidthMismatch = true;
+                    out.widthError = true;
+                }
             }
         }
-    }
-    this.$$errors = out;
-};
-Window.prototype.isActuallyWindow = function(){
-    //noinspection FallthroughInSwitchStatementJS
-    switch (this.type){
-        case '1p':
-        case '2p':
-        case '3p':
-            return true;
-        default:
-            return false;
-    }
-};
+        this.$$errors = out;
+    };
+    p.isActuallyWindow = function(){
+        //noinspection FallthroughInSwitchStatementJS
+        switch (this.type){
+            case '1p':
+            case '2p':
+            case '3p':
+                return true;
+            default:
+                return false;
+        }
+    };
+})(Window.prototype);
+
 
 PerWindowTable = function(w){
 
