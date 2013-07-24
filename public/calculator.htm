@@ -235,6 +235,11 @@
                                 <td>Изделие</td>
                                 <td>{{prices.product(currentWindow) | rub}}</td>
                             </tr>
+                            <tr>
+                                <td></td>
+                                <td>Москитная сетка</td>
+                                <td>{{prices.net(currentWindow) | rub}}</td>
+                            </tr>
                             <tr><td><br></td><td></td><td></td></tr>
                             <tr ng-show="currentWindow.isActuallyWindow()">
                                 <td>
@@ -332,7 +337,7 @@
                     <div ng-hide="hasErrors()">
                         <h4>Изделия {{prices.countProducts()}} шт.: {{prices.totalWindows() | rub}}</h4>
                         <h4>Откосы: {{prices.otkosyTotal() | rub }}</h4>
-                        <h4>Москитные сетки: {{ 0 | rub }} <!--FIXME --></h4>
+                        <h4>Москитные сетки: {{prices.netTotal() | rub }}</h4>
                         <h4>Подоконниики: {{prices.podokonnikTotal()| rub }}</h4>
                         <h4>Отливы: {{prices.otlivTotal() | rub }}</h4>
                         <h4>Доставка: {{ 0 | rub }} <!--FIXME --></h4>

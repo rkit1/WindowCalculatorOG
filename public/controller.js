@@ -263,6 +263,12 @@ Prices = function($scope){
         });
         return out;
     };
+    this.net = function(w){
+        return $scope.fullTable.netPrice(w)
+    };
+    this.netTotal = function(){
+        return $scope.fullTable.c55()
+    };
 };
 
 Window = function(w){
@@ -517,7 +523,6 @@ PerWindowTable = function(w){
         return w.laminate * 45;
     };
 
-
     /**
      * Стоимость
      * @returns {number}
@@ -542,7 +547,6 @@ PerWindowTable = function(w){
     this.r24 = function() {
         return this.r8() * this.r9() / 1000000
     };
-
 
     /**
      * Количество изделий
@@ -582,7 +586,7 @@ PerWindowTable = function(w){
 FullTable = function($scope){
     var ws = $scope.windows;
     var discount = $injector.get('discount');
-
+    var ft = this;
     //noinspection JSUnusedGlobalSymbols
     /**
      * ОБЩАЯ ПЛОЩАДЬ
@@ -756,13 +760,16 @@ FullTable = function($scope){
      * @returns {number}
      */
     this.c54 = function(){
-        var r = 0;
-        angular.forEach(ws,function(w){
-            if (w.isActuallyWindow())
-                angular.forEach(w.getActivePanes(), function(p){
-                    if (p.net) r += (p.width * w.height / 1000000)
-                });
+        return ws.mapSum(function(w){
+            return ft.netArea(w)
         });
+    };
+    this.netArea = function(w){
+        var r = 0;
+        if (w.isActuallyWindow())
+            angular.forEach(w.getActivePanes(), function(p){
+                if (p.net) r += (p.width * w.height / 1000000)
+            });
         return r;
     };
 
@@ -772,6 +779,9 @@ FullTable = function($scope){
      */
     this.c55 = function(){
         return this.c54() * 35;
+    };
+    this.netPrice = function(w){
+        return this.netArea(w) * 35;
     };
 
     /**
