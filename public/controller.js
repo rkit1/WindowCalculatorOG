@@ -628,7 +628,6 @@ FullTable = function($scope){
      */
     this.c65 = function(){
         var sum = 0;
-        var ft = this; //FIXME
         angular.forEach(ws,function(w){
             sum += ft.montagePrice(w);
         });
@@ -681,7 +680,6 @@ FullTable = function($scope){
      */
     this.i49 = function() {
         var sum = 0;
-        var ft = this; // FIXME
         angular.forEach(ws,function(w){
             ft.podokonnikPrice(w);
         });
