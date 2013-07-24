@@ -1,3 +1,10 @@
+Array.prototype.mapSum = function(f) {
+    var out = 0;
+    angular.forEach(this, function(i){
+        out += f(i);
+    });
+    return out;
+}
 var calc = angular.module('Calc', ['ngCookies', 'ui.bootstrap', 'ngResource']);
 calc.factory('data', function($resource){
     return $resource('data.php').get(function(){
@@ -196,38 +203,65 @@ calc.controller('CalcController', function ($scope, $cookies) {
         $scope.$apply();
     });
     // form, order
-    $scope.s.state = "form";
+    $scope.s = { state: "form" };
 });
 
 Prices = function($scope){
-    //noinspection JSUnusedGlobalSymbols
+    var pt = this;
     this.totalWindows = function(){
         $scope.save();
         return $scope.fullTable.i31();
     };
-    //noinspection JSUnusedGlobalSymbols
     this.total = function(){
         return $scope.fullTable.c76();
     };
     this.discount = function(){
         return $scope.fullTable.discount();
     };
-    //noinspection JSUnusedGlobalSymbols
     this.podokonnik = function(w){
         return $scope.fullTable.podokonnikPrice(w);
     };
-    //noinspection JSUnusedGlobalSymbols
+    this.podokonnikTotal = function(){
+        return $scope.windows.mapSum(function(w){
+            return pt.podokonnik(w);
+        });
+    };
     this.otliv = function(w){
         return $scope.fullTable.otlivPrice(w);
+    };
+    this.otlivTotal = function(){
+        return $scope.windows.mapSum(function(w){
+            return pt.otliv(w);
+        });
     };
     this.montage = function(w){
         return $scope.fullTable.montagePrice(w);
     };
-    this.laminate = function(w){
-        return w.getTable().r21();
+    this.montageTotal = function(){
+        return $scope.windows.mapSum(function(w){
+            return pt.montage(w)
+        });
+    };
+    this.product = function(w){
+        return w.getTable().r22();
     };
     this.otkosy = function(w){
-        return $scope.fullTable.otkosyPrice(w)
+        return $scope.fullTable.otkosyPrice(w);
+    };
+    this.otkosyTotal = function(){
+        var out = 0;
+        var pt = this;
+        angular.forEach($scope.windows, function(w){
+            out += pt.otkosy(w);
+        });
+        return out;
+    };
+    this.countProducts = function(){
+        var out = 0;
+        angular.forEach($scope.windows, function(w){
+            out += w.quantity;
+        });
+        return out;
     };
 };
 

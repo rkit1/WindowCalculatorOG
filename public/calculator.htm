@@ -228,8 +228,14 @@
                                         <option value="2">двусторонняя</option>
                                     </select>
                                 </td>
-                                <td>{{prices.laminate(currentWindow) | rub}}</td>
+                                <td></td>
                             </tr>
+                            <tr>
+                                <td></td>
+                                <td>Изделие</td>
+                                <td>{{prices.product(currentWindow) | rub}}</td>
+                            </tr>
+                            <tr><td><br></td><td></td><td></td></tr>
                             <tr ng-show="currentWindow.isActuallyWindow()">
                                 <td>
                                     <label for="podokonniki">Подоконник</label>
@@ -315,10 +321,6 @@
                                    ng-model="currentWindow.quantity"><br>
                         </label>
 
-                        <div>
-                            <button class="btn btn-danger"
-                                    ng-click="removeWindowConfirm(currentWindow)"><i class="icon-trash"></i> Удалить изделие</button>
-                        </div>
                         -->
                 </div>
             </div>
@@ -328,8 +330,13 @@
             <div class="span4">
                 <div class="span4" data-spy="affix" data-offset-top="268">
                     <div ng-hide="hasErrors()">
-                        <h4>Окна и двери: {{prices.totalWindows() | rub}}</h4>
-                        <h4>Скидка: -{{prices.discount() | rub}}</h4>
+                        <h4>Изделия {{prices.countProducts()}} шт.: {{prices.totalWindows() | rub}}</h4>
+                        <h4>Откосы: {{prices.otkosyTotal() | rub }}</h4>
+                        <h4>Москитные сетки: {{ 0 | rub }} <!--FIXME --></h4>
+                        <h4>Подоконниики: {{prices.podokonnikTotal()| rub }}</h4>
+                        <h4>Отливы: {{prices.otlivTotal() | rub }}</h4>
+                        <h4>Доставка: {{ 0 | rub }} <!--FIXME --></h4>
+                        <h4>Монтаж: {{prices.montageTotal() | rub }}</h4>
                         <h3>Общая сумма: {{prices.total() | rub}}</h3>
                         <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
                     </div>
