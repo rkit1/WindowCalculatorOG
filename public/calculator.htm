@@ -330,17 +330,17 @@
             </div>
 
 
-            <!-- FIXME аффикс для узкого вывода убрать -->
             <div class="span4">
                 <div class="span4" data-spy="affix" data-offset-top="268">
                     <div ng-hide="hasErrors()">
                         <h4>Изделия {{prices.countProducts()}} шт.: {{prices.totalWindows() | rub}}</h4>
                         <h4>Откосы: {{prices.otkosyTotal() | rub }}</h4>
                         <h4>Москитные сетки: {{prices.netTotal() | rub }}</h4>
-                        <h4>Подоконниики: {{prices.podokonnikTotal()| rub }}</h4>
+                        <h4>Подоконники: {{prices.podokonnikTotal()| rub }}</h4>
                         <h4>Отливы: {{prices.otlivTotal() | rub }}</h4>
-                        <h4>Доставка: {{ 0 | rub }} <!--FIXME --></h4>
+                        <h4>Доставка: {{prices.delivery()| rub }}</h4>
                         <h4>Монтаж: {{prices.montageTotal() | rub }}</h4>
+                        <h4>Скидка: -{{prices.discount() | rub}}</h4>
                         <h3>Общая сумма: {{prices.total() | rub}}</h3>
                         <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
                     </div>

@@ -206,6 +206,7 @@ calc.controller('CalcController', function ($scope, $cookies) {
     $scope.s = { state: "form" };
 });
 
+// TODO Разобраться, почему цены не сходятся.
 Prices = function($scope){
     var pt = this;
     this.totalWindows = function(){
@@ -268,6 +269,9 @@ Prices = function($scope){
     };
     this.netTotal = function(){
         return $scope.fullTable.c55()
+    };
+    this.delivery = function(){
+        return $scope.fullTable.c66();
     };
 };
 
