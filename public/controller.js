@@ -210,10 +210,10 @@ calc.controller('CalcController', function ($scope, $cookies) {
 Prices = function($scope){
     var pt = this;
     this.totalWindows = function(){
-        $scope.save();
         return $scope.fullTable.i31();
     };
     this.total = function(){
+        $scope.save();
         return $scope.fullTable.c76();
     };
     this.discount = function(){
@@ -393,11 +393,13 @@ Window = function(w){
     };
 })(Window.prototype);
 
-
+/**
+ * @param w
+ * @returns {*}
+ * @constructor
+ */
 PerWindowTable = function(w){
-
     var profiles = $injector.get('profiles');
-
     /**
      * Ширина рамы
      * @returns Number
@@ -648,7 +650,7 @@ FullTable = function($scope){
     };
 
     /**
-     *  Подоконный профиль пог. мм
+     * Подоконный профиль пог. мм
      * @returns {number}
      */
     this.c35 = function(){
@@ -665,7 +667,7 @@ FullTable = function($scope){
      * @returns {number}
      */
     this.c36 = function (){
-        return this.c35()/250;
+        return this.c35()/250 * 1.3;
     };
 
 
@@ -783,7 +785,7 @@ FullTable = function($scope){
         return this.c54() * 35;
     };
     this.netPrice = function(w){
-        return this.netArea(w) * 35;
+        return this.netArea(w) * 35 * 1.3;
     };
 
     /**
@@ -791,7 +793,7 @@ FullTable = function($scope){
      * @returns {number}
      */
     this.c62 = function(){
-        return (this.c55() + this.c36()) * 1.3;
+        return this.c55() + this.c36();
     };
 
     /**
@@ -811,25 +813,13 @@ FullTable = function($scope){
     };
 
     /**
-     * Итого к оплате помощник
-     * @returns {number}
-     */
-    this.c76_pre = function(){
-        return this.i31() + this.c62() +  this.i62();
-    };
-
-
-    /**
      * Откосы пвх
      * @returns {number}
      */
     this.c70 = function(){
-        var out = 0;
-        var ft = this;
-        angular.forEach(ws, function(w){
-            out += ft.otkosyPrice(w);
+        return ws.mapSum(function(w){
+            return ft.otkosyPrice(w);
         });
-        return out;
     };
     this.otkosyPrice = function (w) {
         if (!w.isActuallyWindow() || w.otkosy.type == -1) return 0;
@@ -839,6 +829,15 @@ FullTable = function($scope){
     this.otkosyTable = [
         23, 28, 35, 38
     ];
+
+    /**
+     * Итого к оплате помощник
+     * @returns {number}
+     */
+    this.c76_pre = function(){
+        return this.i31() + this.c62() +  this.i62();
+    };
+
 
     /**
      * Итого к оплате
