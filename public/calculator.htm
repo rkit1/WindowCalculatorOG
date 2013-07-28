@@ -49,8 +49,9 @@
                                 ></div>
                             </div>
                             <div ng-hide="window.$$errors.hasSome">
-                                {{window.getSinglePrice() | rub}}
-                                <span ng-show="window.quantity > 1">x {{window.quantity}} = {{window.getTotalPrice() | rub}}</span>
+                                {{prices.product(window) | rub}}
+                                <span ng-show="window.quantity > 1">x {{window.quantity}}
+                                    = {{prices.product(window) * window.quantity| rub}}</span>
                             </div>
                             <div ng-show="window.$$errors.hasSome" class="text-error">
                                 Заполнено неверно.

@@ -209,12 +209,18 @@ calc.controller('CalcController', function ($scope, $cookies) {
 // TODO Разобраться, почему цены не сходятся.
 Prices = function($scope){
     var pt = this;
+    var profiles = $injector.get('profiles');
+
     this.totalWindows = function(){
-        return $scope.fullTable.i31();
+        return $scope.windows.mapSum(function(w){
+            return pt.product(w) * w.quantity;
+        });
     };
     this.total = function(){
         $scope.save();
-        return $scope.fullTable.c76();
+        return pt.totalWindows() + pt.otkosyTotal() + pt.netTotal()
+             + pt.podokonnikTotal() + pt.otlivTotal() + pt.delivery()
+             + pt.montageTotal() - pt.discount();
     };
     this.discount = function(){
         return $scope.fullTable.discount();
@@ -243,8 +249,11 @@ Prices = function($scope){
             return pt.montage(w)
         });
     };
+    this.podoProfili = function(w){
+        return w.width * 4 / 1000;
+    };
     this.product = function(w){
-        return w.getTable().r22();
+        return (w.getTable().r23() * (profiles[w.profile].priceCoefficient / 100) + this.podoProfili(w)) * 1.3;
     };
     this.otkosy = function(w){
         return $scope.fullTable.otkosyPrice(w);
@@ -268,7 +277,9 @@ Prices = function($scope){
         return $scope.fullTable.netPrice(w)
     };
     this.netTotal = function(){
-        return $scope.fullTable.c55()
+        return $scope.windows.mapSum(function(w){
+            return pt.net(w) * w.quantity;
+        });
     };
     this.delivery = function(){
         return $scope.fullTable.c66();
@@ -534,7 +545,7 @@ PerWindowTable = function(w){
      * @returns {number}
      */
     this.r22 = function() {
-        return this.r23() * 1.3 * (profiles[w.profile].priceCoefficient / 100);
+        return this.r23() * 1.3;
     };
 
     /**
@@ -667,7 +678,7 @@ FullTable = function($scope){
      * @returns {number}
      */
     this.c36 = function (){
-        return this.c35()/250 * 1.3;
+        return this.c35()/250;
     };
 
 
