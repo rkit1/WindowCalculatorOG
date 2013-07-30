@@ -8,5 +8,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') die();
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     header("Content-type: application/json");
     echo file_get_contents("options.json");
-}
-//todo
+}//todo

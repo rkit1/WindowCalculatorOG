@@ -4,13 +4,25 @@ Array.prototype.mapSum = function(f) {
         out += f(i);
     });
     return out;
-}
+};
 var calc = angular.module('Calc', ['ngCookies', 'ui.bootstrap', 'ngResource']);
 calc.factory('data', function($resource){
-    return $resource('data.php').get(function(){
+    return $resource('options.php').get(function(){
         $injector.get('$rootScope').$emit('dataIsReady');
     });
 });
+calc.factory('orders', function($resource){
+    return {
+        list: function(){
+            return $http({method: 'GET', url: 'orders.php?list'})
+        },
+        newOrder: function(){
+            var Order = $resource('orders.php', {}, {
+                register: {method:'POST'}
+            });
+            return new Order();
+        }
+    }})
 calc.factory('profiles', function(){
     return [
         {
@@ -203,10 +215,39 @@ calc.controller('CalcController', function ($scope, $cookies) {
         $scope.$apply();
     });
     // form, order
-    $scope.s = { state: "form" };
+    $scope.s = { state: "order"};
+    (function(){
+        $scope.order = {
+            close: function(){
+                $scope.s.state = "form";
+            },
+            options: {
+                backdropFade: true,
+                dialogFade: true,
+                backdropClick: true,
+                keyboard: true,
+                backdrop: true
+            },
+            form: {
+                name: "",
+                phone: "",
+                delivery: 0,
+                address: "",
+                comment: ""
+            },
+            order: function(){
+                this.object.$register(function(){
+
+                });
+            }
+        };
+        $scope.order.object = new $injector.get('orders').newOrder();
+        $scope.order.object.form = $scope.order.form;
+        $scope.order.object.windows = $scope.windows;
+    })();
 });
 
-// TODO Разобраться, почему цены не сходятся.
+
 Prices = function($scope){
     var pt = this;
     var profiles = $injector.get('profiles');
@@ -219,7 +260,7 @@ Prices = function($scope){
     this.total = function(){
         $scope.save();
         return pt.totalWindows() + pt.otkosyTotal() + pt.netTotal()
-             + pt.podokonnikTotal() + pt.otlivTotal() + pt.delivery()
+             + pt.podokonnikTotal() + pt.otlivTotal()
              + pt.montageTotal() - pt.discount();
     };
     this.discount = function(){
