@@ -1,3 +1,10 @@
+Array.prototype.mapSum = function(f) {
+    var out = 0;
+    angular.forEach(this, function(i){
+        out += f(i);
+    });
+    return out;
+}
 var calc = angular.module('Calc', ['ngCookies', 'ui.bootstrap', 'ngResource']);
 calc.factory('data', function($resource){
     return $resource('data.php').get(function(){
@@ -8,15 +15,15 @@ calc.factory('profiles', function(){
     return [
         {
             priceCoefficient: 100,
-            name: "0%"
+            name: "Veka"
         },
         {
-            priceCoefficient: 105,
-            name: "5%"
+            priceCoefficient: 97,
+            name: "Rehau"
         },
         {
-            priceCoefficient: 110,
-            name: "10%"
+            priceCoefficient: 93,
+            name: "Montblanc"
         }
     ];
 });
@@ -33,7 +40,7 @@ calc.factory('discount', function(){
                     else break;
             }
             return { resultingSum: sum * (1-disc/100)
-                , discount: sum * (disc/100) }
+                   , discount: sum * (disc/100) }
         }
     };
 });
@@ -226,34 +233,87 @@ calc.controller('CalcController', function ($scope, $cookies) {
         $scope.dataLoaded = true;
         $scope.$apply();
     });
+    // form, order
+    $scope.s = { state: "form" };
 });
 
+// TODO Разобраться, почему цены не сходятся.
 Prices = function($scope){
-    //noinspection JSUnusedGlobalSymbols
+    var pt = this;
+    var profiles = $injector.get('profiles');
+
     this.totalWindows = function(){
-        $scope.save();
-        return $scope.fullTable.i31();
+        return $scope.windows.mapSum(function(w){
+            return pt.product(w) * w.quantity;
+        });
     };
-    //noinspection JSUnusedGlobalSymbols
     this.total = function(){
-        return $scope.fullTable.c76();
+        $scope.save();
+        return pt.totalWindows() + pt.otkosyTotal() + pt.netTotal()
+             + pt.podokonnikTotal() + pt.otlivTotal() + pt.delivery()
+             + pt.montageTotal() - pt.discount();
     };
     this.discount = function(){
         return $scope.fullTable.discount();
     };
-    //noinspection JSUnusedGlobalSymbols
     this.podokonnik = function(w){
         return $scope.fullTable.podokonnikPrice(w);
     };
-    //noinspection JSUnusedGlobalSymbols
+    this.podokonnikTotal = function(){
+        return $scope.windows.mapSum(function(w){
+            return pt.podokonnik(w);
+        });
+    };
     this.otliv = function(w){
         return $scope.fullTable.otlivPrice(w);
+    };
+    this.otlivTotal = function(){
+        return $scope.windows.mapSum(function(w){
+            return pt.otliv(w);
+        });
     };
     this.montage = function(w){
         return $scope.fullTable.montagePrice(w);
     };
-    this.laminate = function(w){
-        return w.getTable().r21();
+    this.montageTotal = function(){
+        return $scope.windows.mapSum(function(w){
+            return pt.montage(w)
+        });
+    };
+    this.podoProfili = function(w){
+        return w.width * 4 / 1000;
+    };
+    this.product = function(w){
+        return (w.getTable().r23() * (profiles[w.profile].priceCoefficient / 100) + this.podoProfili(w)) * 1.3;
+    };
+    this.otkosy = function(w){
+        return $scope.fullTable.otkosyPrice(w);
+    };
+    this.otkosyTotal = function(){
+        var out = 0;
+        var pt = this;
+        angular.forEach($scope.windows, function(w){
+            out += pt.otkosy(w);
+        });
+        return out;
+    };
+    this.countProducts = function(){
+        var out = 0;
+        angular.forEach($scope.windows, function(w){
+            out += w.quantity;
+        });
+        return out;
+    };
+    this.net = function(w){
+        return $scope.fullTable.netPrice(w)
+    };
+    this.netTotal = function(){
+        return $scope.windows.mapSum(function(w){
+            return pt.net(w) * w.quantity;
+        });
+    };
+    this.delivery = function(){
+        return $scope.fullTable.c66();
     };
 };
 
@@ -276,105 +336,112 @@ Window = function(w){
     this.checkSizeErrors();
     return this;
 };
-
-// FIXME РАЗОБРАТЬСЯ, БЛЯДЬ, УЖЕ
-Window.prototype.getTable = function(){
-    return new PerWindowTable(this);
-};
-Window.prototype.getPanesCount = function(){
-    switch (this.type)
-    {
-        case '1p': return 1;
-        case '2p': return 2;
-        case '3p': return 3;
-    }
-    return 1;
-};
-Window.prototype.getActivePanes = function(){
-    if (this.type == 'door') return [];
-    return this.panes.slice(0, this.getPanesCount());
-};
-//noinspection JSUnusedGlobalSymbols
-Window.prototype.getSinglePrice = function(){
-    return this.getTable().r22();
-};
-//noinspection JSUnusedGlobalSymbols
-Window.prototype.getTotalPrice = function(){
-    return this.getTable().r30();
-};
-//noinspection JSUnusedGlobalSymbols
-Window.prototype.recalculateWidth = function(){
-    var w = this.width;
-    var panes = this.getActivePanes();
-    for (var i = 0; i < panes.length - 1; i++)
-        w -= panes[i].width;
-    panes[panes.length - 1].width = w;
-    this.checkSizeErrors();
-};
-Window.prototype.setType = function(t){
-    switch (t){
-        case '1p':
-            this.type = t;
-            this.panes[0] = {type: 'solid', width: 800};
-            this.width = 800;
-            this.height = 1500;
-            break;
-        case '2p':
-            this.type = t;
-            this.panes[0] = {type: 'solid', width: 750};
-            this.panes[1] = {type: 'solid', width: 750};
-            this.width = 1500;
-            this.height = 1500;
-            break;
-        case '3p':
-            this.type = t;
-            this.panes[0] = {type: 'solid', width: 700};
-            this.panes[1] = {type: 'solid', width: 700};
-            this.panes[2] = {type: 'solid', width: 700};
-            this.width = 2100;
-            this.height = 1500;
-            break;
-        case 'door':
-            this.type = t;
-            this.width = 700;
-            this.height = 2200;
-            break;
-    }
-};
-Window.prototype.checkSizeErrors = function(){
-    var ps = this.getActivePanes();
-    var out = {errors: {}, paneErrors: []};
-    for (var i = 0; i < ps.length; i++) {
-        if (ps[i].width < 100)
+(function(p){
+    // FIXME РАЗОБРАТЬСЯ, БЛЯДЬ, УЖЕ
+    /**
+     * @returns {PerWindowTable}
+     */
+    p.getTable = function(){
+        return new PerWindowTable(this);
+    };
+    p.getPanesCount = function(){
+        switch (this.type)
         {
-            out.errors.paneTooSmall = true;
-            out.paneErrors[i] = true;
-            out.hasSome = true;
-            if (ps[i].width < 0)
+            case '1p': return 1;
+            case '2p': return 2;
+            case '3p': return 3;
+        }
+        return 1;
+    };
+    p.getActivePanes = function(){
+        if (this.type == 'door') return [];
+        return this.panes.slice(0, this.getPanesCount());
+    };
+//noinspection JSUnusedGlobalSymbols
+    p.getSinglePrice = function(){
+        return this.getTable().r22();
+    };
+//noinspection JSUnusedGlobalSymbols
+    p.getTotalPrice = function(){
+        return this.getTable().r30();
+    };
+//noinspection JSUnusedGlobalSymbols
+    p.recalculateWidth = function(){
+        var w = this.width;
+        var panes = this.getActivePanes();
+        for (var i = 0; i < panes.length - 1; i++)
+            w -= panes[i].width;
+        panes[panes.length - 1].width = w;
+        this.checkSizeErrors();
+    };
+    p.setType = function(t){
+        switch (t){
+            case '1p':
+                this.type = t;
+                this.panes[0] = {type: 'solid', width: 800};
+                this.width = 800;
+                this.height = 1500;
+                break;
+            case '2p':
+                this.type = t;
+                this.panes[0] = {type: 'solid', width: 750};
+                this.panes[1] = {type: 'solid', width: 750};
+                this.width = 1500;
+                this.height = 1500;
+                break;
+            case '3p':
+                this.type = t;
+                this.panes[0] = {type: 'solid', width: 700};
+                this.panes[1] = {type: 'solid', width: 700};
+                this.panes[2] = {type: 'solid', width: 700};
+                this.width = 2100;
+                this.height = 1500;
+                break;
+            case 'door':
+                this.type = t;
+                this.width = 700;
+                this.height = 2200;
+                break;
+        }
+    };
+    p.checkSizeErrors = function(){
+        var ps = this.getActivePanes();
+        var out = {errors: {}, paneErrors: []};
+        for (var i = 0; i < ps.length; i++) {
+            if (ps[i].width < 100)
             {
-                out.errors.paneWindowWidthMismatch = true;
-                out.widthError = true;
+                out.errors.paneTooSmall = true;
+                out.paneErrors[i] = true;
+                out.hasSome = true;
+                if (ps[i].width < 0)
+                {
+                    out.errors.paneWindowWidthMismatch = true;
+                    out.widthError = true;
+                }
             }
         }
-    }
-    this.$$errors = out;
-};
-Window.prototype.isActuallyWindow = function(){
-    //noinspection FallthroughInSwitchStatementJS
-    switch (this.type){
-        case '1p':
-        case '2p':
-        case '3p':
-            return true;
-        default:
-            return false;
-    }
-};
+        this.$$errors = out;
+    };
+    p.isActuallyWindow = function(){
+        //noinspection FallthroughInSwitchStatementJS
+        switch (this.type){
+            case '1p':
+            case '2p':
+            case '3p':
+                return true;
+            default:
+                return false;
+        }
+    };
+})(Window.prototype);
 
+/**
+ * @param w
+ * @returns {*}
+ * @constructor
+ */
 PerWindowTable = function(w){
-
     var profiles = $injector.get('profiles');
-
     /**
      * Ширина рамы
      * @returns Number
@@ -463,11 +530,13 @@ PerWindowTable = function(w){
     };
 
     /**
-     * Надбавка за с/п (по прайс-листу). FIXME разобраться с реальным числом.
+     * Надбавка за стеклопакет
+     * 1)По цене на стеклопакеты, если однокамерный стеклапакет то ставим надбавку 20,
+     * если двухкамерный то 30
      * @returns {number}
      */
     this.r17 = function() {
-        return 20;
+        return w.steklopaket * 10 + 10;
     };
 
     /**
@@ -502,13 +571,12 @@ PerWindowTable = function(w){
         return w.laminate * 45;
     };
 
-
     /**
      * Стоимость
      * @returns {number}
      */
     this.r22 = function() {
-        return this.r23() * 1.3 * (profiles[w.profile].priceCoefficient / 100);
+        return this.r23() * 1.3;
     };
 
     /**
@@ -527,7 +595,6 @@ PerWindowTable = function(w){
     this.r24 = function() {
         return this.r8() * this.r9() / 1000000
     };
-
 
     /**
      * Количество изделий
@@ -567,7 +634,7 @@ PerWindowTable = function(w){
 FullTable = function($scope){
     var ws = $scope.windows;
     var discount = $injector.get('discount');
-
+    var ft = this;
     //noinspection JSUnusedGlobalSymbols
     /**
      * ОБЩАЯ ПЛОЩАДЬ
@@ -609,7 +676,6 @@ FullTable = function($scope){
      */
     this.c65 = function(){
         var sum = 0;
-        var ft = this; //FIXME
         angular.forEach(ws,function(w){
             sum += ft.montagePrice(w);
         });
@@ -626,7 +692,7 @@ FullTable = function($scope){
     };
 
     /**
-     *  Подоконный профиль пог. мм
+     * Подоконный профиль пог. мм
      * @returns {number}
      */
     this.c35 = function(){
@@ -662,7 +728,6 @@ FullTable = function($scope){
      */
     this.i49 = function() {
         var sum = 0;
-        var ft = this; // FIXME
         angular.forEach(ws,function(w){
             ft.podokonnikPrice(w);
         });
@@ -741,13 +806,16 @@ FullTable = function($scope){
      * @returns {number}
      */
     this.c54 = function(){
-        var r = 0;
-        angular.forEach(ws,function(w){
-            if (w.isActuallyWindow())
-                angular.forEach(w.getActivePanes(), function(p){
-                    if (p.net) r += (p.width * w.height / 1000000)
-                });
+        return ws.mapSum(function(w){
+            return ft.netArea(w)
         });
+    };
+    this.netArea = function(w){
+        var r = 0;
+        if (w.isActuallyWindow())
+            angular.forEach(w.getActivePanes(), function(p){
+                if (p.net) r += (p.width * w.height / 1000000)
+            });
         return r;
     };
 
@@ -758,13 +826,16 @@ FullTable = function($scope){
     this.c55 = function(){
         return this.c54() * 35;
     };
+    this.netPrice = function(w){
+        return this.netArea(w) * 35 * 1.3;
+    };
 
     /**
      * Общая стоимость аксессуаров
      * @returns {number}
      */
     this.c62 = function(){
-        return (this.c55() + this.c36()) * 1.3;
+        return this.c55() + this.c36();
     };
 
     /**
@@ -784,6 +855,24 @@ FullTable = function($scope){
     };
 
     /**
+     * Откосы пвх
+     * @returns {number}
+     */
+    this.c70 = function(){
+        return ws.mapSum(function(w){
+            return ft.otkosyPrice(w);
+        });
+    };
+    this.otkosyPrice = function (w) {
+        if (!w.isActuallyWindow() || w.otkosy.type == -1) return 0;
+        var length = (w.width + w.height * 2) / 10000;
+        return length * this.otkosyTable[w.otkosy.type];
+    };
+    this.otkosyTable = [
+        23, 28, 35, 38
+    ];
+
+    /**
      * Итого к оплате помощник
      * @returns {number}
      */
@@ -791,14 +880,6 @@ FullTable = function($scope){
         return this.i31() + this.c62() +  this.i62();
     };
 
-
-    /**
-     * Откосы пвх
-     * @returns {number}
-     */
-    this.c70 = function(){
-        return 0; //fixme
-    };
 
     /**
      * Итого к оплате

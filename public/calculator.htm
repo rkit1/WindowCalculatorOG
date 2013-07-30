@@ -31,7 +31,7 @@
     </div>
 </div>
 <div ng-controller="CalcController" class="container" id="ctrl">
-    <div>
+    <div ng-show="s.state == 'form'">
         <div class="row">
             <div class="span8">
                 <ul class="nav nav-tabs">
@@ -49,8 +49,9 @@
                                 ></div>
                             </div>
                             <div ng-hide="window.$$errors.hasSome">
-                                {{window.getSinglePrice() | rub}}
-                                <span ng-show="window.quantity > 1">x {{window.quantity}} = {{window.getTotalPrice() | rub}}</span>
+                                {{prices.product(window) | rub}}
+                                <span ng-show="window.quantity > 1">x {{window.quantity}}
+                                    = {{prices.product(window) * window.quantity| rub}}</span>
                             </div>
                             <div ng-show="window.$$errors.hasSome" class="text-error">
                                 Заполнено неверно.
@@ -187,10 +188,6 @@
 
                         <br>
 
-
-
-
-
                         <table id="options">
                             <tbody>
                             <tr>
@@ -198,12 +195,11 @@
                                     <label for="profile">Профиль</label>
                                 </td>
                                 <td>
-                                    <!-- FIXME расценка -->
                                     <select ng-model="currentWindow.profile" id="profile"
                                             class="span3">
-                                        <option value="0">Montblank</option>
+                                        <option value="0">Veka</option>
                                         <option value="1">Rehau</option>
-                                        <option value="2">Veka</option>
+                                        <option value="2">Montblank</option>
                                     </select>
                                 </td>
                                 <td></td>
@@ -233,14 +229,24 @@
                                         <option value="2">двусторонняя</option>
                                     </select>
                                 </td>
-                                <td>{{prices.laminate(currentWindow) | rub}}</td>
+                                <td></td>
                             </tr>
+                            <tr>
+                                <td></td>
+                                <td>Изделие</td>
+                                <td>{{prices.product(currentWindow) | rub}}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>Москитная сетка</td>
+                                <td>{{prices.net(currentWindow) | rub}}</td>
+                            </tr>
+                            <tr><td><br></td><td></td><td></td></tr>
                             <tr ng-show="currentWindow.isActuallyWindow()">
                                 <td>
                                     <label for="podokonniki">Подоконник</label>
                                 </td>
                                 <td>
-                                    <!-- FIXME -->
                                     <select ng-model="currentWindow.podokonniki.type" id="podokonniki"
                                             class="span3">
                                         <option value="-1">Не нужен</option>
@@ -288,18 +294,13 @@
                                     <select ng-model="currentWindow.otkosy.type" id="otkosy"
                                             class="span3">
                                         <option value="-1">Не нужны</option>
-                                        <option value="0">0-110мм</option>
-                                        <option value="1">110-150мм</option>
-                                        <option value="2">151-180мм</option>
-                                        <option value="3">181-200мм</option>
-                                        <option value="4">201-206мм</option>
-                                        <option value="5">261-280мм</option>
-                                        <option value="6">281-310мм</option>
-                                        <option value="7">311-340мм</option>
-                                        <option value="8">341-420мм</option>
+                                        <option value="0">до 25 см</option>
+                                        <option value="1">до 35 см</option>
+                                        <option value="2">до 45 см</option>
+                                        <option value="3">до 60 см</option>
                                     </select>
                                 </td>
-                                <td></td>
+                                <td>{{prices.otkosy(currentWindow) | rub}}</td>
                             </tr>
                             <tr>
                                 <td>
@@ -325,10 +326,6 @@
                                    ng-model="currentWindow.quantity"><br>
                         </label>
 
-                        <div>
-                            <button class="btn btn-danger"
-                                    ng-click="removeWindowConfirm(currentWindow)"><i class="icon-trash"></i> Удалить изделие</button>
-                        </div>
                         -->
                 </div>
             </div>
@@ -337,7 +334,13 @@
             <div class="span4">
                 <div class="span4" data-spy="affix" data-offset-top="268">
                     <div ng-hide="hasErrors()">
-                        <h4>Окна и двери: {{prices.totalWindows() | rub}}</h4>
+                        <h4>Изделия {{prices.countProducts()}} шт.: {{prices.totalWindows() | rub}}</h4>
+                        <h4>Откосы: {{prices.otkosyTotal() | rub }}</h4>
+                        <h4>Москитные сетки: {{prices.netTotal() | rub }}</h4>
+                        <h4>Подоконники: {{prices.podokonnikTotal()| rub }}</h4>
+                        <h4>Отливы: {{prices.otlivTotal() | rub }}</h4>
+                        <h4>Доставка: {{prices.delivery()| rub }}</h4>
+                        <h4>Монтаж: {{prices.montageTotal() | rub }}</h4>
                         <h4>Скидка: -{{prices.discount() | rub}}</h4>
                         <h3>Общая сумма: {{prices.total() | rub}}</h3>
                         <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
@@ -350,6 +353,9 @@
         </div>
     </div>
 
+    <div ng-show="s.state == 'order'">
+
+    </div>
     <div modal="confirm.isOpen" close="confirm.close()" options="confirm.options">
         <div class="modal-header">{{confirm.message}}</div>
         <div class="modal-footer">
@@ -402,10 +408,7 @@
                     >Отмена</button>
         </div>
     </div>
-    <!--
-    <pre>
-    {{stateHelper()}}
-        </pre>-->
+
 </div>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
