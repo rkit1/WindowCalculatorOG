@@ -104,9 +104,11 @@
                                     <td colspan="2"></td>
                                     <td colspan="{{currentWindow.getActivePanes().length}}"
                                         class="widthSelector-input">
-                                        <input type="number" class="dimension" ng-model="currentWindow.width"
-                                               ng-change="currentWindow.recalculateWidth()"
-                                               ng-class="{myError:currentWindow.$$errors.errors.paneWindowWidthMismatch}">
+                                        <label>
+                                            <input type="number" class="dimension" ng-model="currentWindow.width"
+                                                   ng-change="currentWindow.recalculateWidth()"
+                                                   ng-class="{myError:currentWindow.$$errors.errors.paneWindowWidthMismatch}">
+                                        </label>
                                     </td>
                                 </tr>
                                 <tr>
@@ -118,8 +120,10 @@
                                 </tr>
                                 <tr>
                                     <td class="heightSelector-input">
-                                        <input type="number" class="dimension"
-                                               ng-model="currentWindow.height"></td>
+                                        <label>
+                                            <input type="number" class="dimension"
+                                                   ng-model="currentWindow.height">
+                                        </label></td>
                                     <td class="windowHeightSelector"></td>
                                     <td ng-repeat="pane in currentWindow.getActivePanes()"
                                         title="{{{solid: 'Глухая створка', rot: 'Поворотная створка', rotdrop: 'Поворотно-откидная створка'}[pane.type]}}"
@@ -135,9 +139,12 @@
                                 <tr>
                                     <td colspan="2"></td>
                                     <td ng-repeat="pane in currentWindow.getActivePanes()" class="widthSelector-input">
-                                        <input type="number" class="dimension" ng-model="pane.width" ng-readonly="$last"
-                                               ng-change="currentWindow.recalculateWidth()"
-                                               ng-class="{true:'myError'}[currentWindow.$$errors.paneErrors[$index]]">
+                                        <label>
+                                            <input type="number" class="dimension" ng-model="pane.width"
+                                                   ng-readonly="$last"
+                                                   ng-change="currentWindow.recalculateWidth()"
+                                                   ng-class="{true:'myError'}[currentWindow.$$errors.paneErrors[$index]]">
+                                        </label>
                                     </td>
                                 <tr>
                                     <td colspan="2"></td>
@@ -156,7 +163,9 @@
                                 <tr>
                                     <td colspan="2"></td>
                                     <td class="widthSelector-input">
-                                        <input type="number" class="dimension" ng-model="currentWindow.width">
+                                        <label>
+                                            <input type="number" class="dimension" ng-model="currentWindow.width">
+                                        </label>
                                     </td>
                                 </tr>
                                 <tr>
@@ -165,8 +174,10 @@
                                 </tr>
                                 <tr>
                                     <td class="heightSelector-input">
-                                        <input type="number" class="dimension"
-                                               ng-model="currentWindow.height">
+                                        <label>
+                                            <input type="number" class="dimension"
+                                                   ng-model="currentWindow.height">
+                                        </label>
                                     </td>
                                     <td class="doorHeightSelector"></td>
                                     <td class="doorImage"></td>
