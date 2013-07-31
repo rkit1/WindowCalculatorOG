@@ -2,3 +2,5 @@
 vendor
 composer.lock
 web.config
+db.php
+*.bak
