@@ -67,6 +67,37 @@ calc.factory('currency', function(){
         }
     };
 });
+calc.factory('discountParserPrinter', function(){
+    return {
+        /**
+         * @param str (string)
+         * @returns {Array}
+         */
+        parse: function(str){
+            var d = str.match(/(\d+)\s+(\d+)/g);
+            var out = [];
+            for (i = 0; i < d.length; i++)
+            {
+                out[i] = {
+                    minSum: d[i][1],
+                    discount: d[i][2]
+                }
+            }
+            return out;
+        },
+        /**
+         * @param data (Array)
+         * @returns {string}
+         */
+        print: function(data){
+            var out = "";
+            angular.forEach(data, function(d){
+                out += d.minSum + " " + d.discount + "\n";
+            });
+            return out;
+        }
+    };
+});
 calc.filter('rub', function(){
     return function(input){
         var rub = $injector.get('currency').toRoubles(input);
