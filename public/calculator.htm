@@ -329,8 +329,6 @@
                         -->
                 </div>
             </div>
-
-
             <div class="span4">
                 <div class="span4" data-spy="affix" data-offset-top="268">
                     <div ng-hide="hasErrors()">
@@ -353,68 +351,70 @@
         </div>
     </div>
 
-    <div modal="s.state == 'order'" close="order.close()" options="modalOptions">
-        <div class="modal-body">
-            <form class="form-horizontal">
-                <fieldset>
-                    <legend>Заказ</legend>
-                    <!-- Имя -->
-                    <div class="control-group">
-                        <label class="control-label" for="name">Имя</label>
-                        <div class="controls">
-                            <input ng-model="order.form.name" id="name" placeholder="" class="input-xlarge" required="" type="text">
+    <div ng-show="s.state == 'order'">
+        <form class="form-horizontal">
+            <fieldset>
+                <legend>Заказ</legend>
+                <!-- Имя -->
+                <div class="control-group">
+                    <label class="control-label" for="name">Имя</label>
+                    <div class="controls">
+                        <input ng-model="order.form.name" id="name" placeholder="" class="input-xlarge" required="" type="text">
 
-                        </div>
                     </div>
+                </div>
 
-                    <!-- Телефон -->
-                    <div class="control-group">
-                        <label class="control-label" for="phone">Номер телефона</label>
-                        <div class="controls">
-                            <input id="phone" ng-model="order.form.phone" placeholder="" class="input-xlarge" required="" type="text">
+                <!-- Телефон -->
+                <div class="control-group">
+                    <label class="control-label" for="phone">Номер телефона</label>
+                    <div class="controls">
+                        <input id="phone" ng-model="order.form.phone" placeholder="" class="input-xlarge" required="" type="text">
 
-                        </div>
                     </div>
+                </div>
 
-                    <!-- Доставка -->
-                    <div class="control-group">
-                        <label class="control-label" for="delivery">Доставка</label>
-                        <div class="controls">
-                            <select name="delivery" id="delivery" ng-model="order.form.delivery"
-                                    class="input-xlarge">
-                                <option value="0">По Москве ({{prices.delivery() | rub}})</option>
-                                <option value="1">Самовывоз</option>
-                                <option value="2">Другое</option>
-                            </select>
-                        </div>
+                <!-- Доставка -->
+                <div class="control-group">
+                    <label class="control-label" for="delivery">Доставка</label>
+                    <div class="controls">
+                        <select name="delivery" id="delivery" ng-model="order.form.delivery"
+                                class="input-xlarge">
+                            <option value="0">По Москве ({{prices.delivery() | rub}})</option>
+                            <option value="1">Самовывоз</option>
+                            <option value="2">Другое</option>
+                        </select>
                     </div>
+                </div>
 
-                    <!-- Адрес  -->
-                    <div class="control-group">
-                        <label class="control-label" for="address">Адрес доставки</label>
-                        <div class="controls">
-                            <textarea id="address" ng-model="order.form.address" class="input-xlarge"></textarea>
-                        </div>
+                <!-- Адрес  -->
+                <div class="control-group">
+                    <label class="control-label" for="address">Адрес доставки</label>
+                    <div class="controls">
+                        <textarea id="address" ng-model="order.form.address" class="input-xlarge"></textarea>
                     </div>
+                </div>
 
-                    <!-- Комментарий -->
-                    <div class="control-group">
-                        <label class="control-label" for="comment">Комментарий</label>
-                        <div class="controls">
-                            <textarea id="comment" ng-model="order.form.comment" class="input-xlarge"></textarea>
-                        </div>
+                <!-- Комментарий -->
+                <div class="control-group">
+                    <label class="control-label" for="comment">Комментарий</label>
+                    <div class="controls">
+                        <textarea id="comment" ng-model="order.form.comment" class="input-xlarge"></textarea>
                     </div>
+                </div>
 
-                </fieldset>
-            </form>
-
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="order.order()">Заказ</button>
-            <button class="btn btn-warning cancel" ng-click="paneTypeSelector.close()"
-                    >Отмена</button>
-        </div>
+            </fieldset>
+        </form>
+        <button class="btn btn-primary" ng-click="order.order()">Заказ</button>
+        <button class="btn btn-warning cancel" ng-click="s.state = 'form'"
+                >Отмена</button>
     </div>
+
+    <div ng-show="s.state == 'orderSuccess'">
+        <h2>
+            Заказ номер {{ orderId }} принят. Ожидайте звонка менеждера.
+        </h2>
+    </div>
+
     <div modal="confirm.isOpen" close="confirm.close()" options="modalOptions">
         <div class="modal-header">{{confirm.message}}</div>
         <div class="modal-footer">
@@ -464,16 +464,6 @@
         <div class="modal-footer">
             <button class="btn btn-warning cancel" ng-click="paneTypeSelector.close()"
                     >Отмена</button>
-        </div>
-    </div>
-    <div modal="s.state == 'orderSuccess'" close="s.state = 'form'" options="modalOptions">
-        <div class="modal-body">
-            <p>
-                Заказ номер {{ orderId }} принят. Ожидайте звонка менеждера.
-            </p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary cancel" ng-click="s.state = 'form'">Закрыть</button>
         </div>
     </div>
 </div>

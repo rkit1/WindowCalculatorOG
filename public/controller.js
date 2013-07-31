@@ -211,9 +211,6 @@ calc.controller('CalcController', function ($scope, $cookies) {
     $scope.s = { state: "form"};
     (function(){
         $scope.order = {
-            close: function(){
-                $scope.s.state = "form";
-            },
             form: {
                 name: "",
                 phone: "",
@@ -222,7 +219,6 @@ calc.controller('CalcController', function ($scope, $cookies) {
                 comment: ""
             },
             order: function(){
-                this.close();
                 this.object.$register(function(data){
                     $scope.s.state = "orderSuccess";
                     $scope.orderId = data.id;
