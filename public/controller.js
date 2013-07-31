@@ -77,6 +77,13 @@ calc.filter('rub', function(){
 var $injector = angular.injector(['Calc']);
 calc.controller('CalcController', function ($scope, $cookies) {
     //noinspection JSUnusedGlobalSymbols
+    $scope.modalOptions = {
+        backdropFade: true,
+        dialogFade: true,
+        backdropClick: true,
+        keyboard: true,
+        backdrop: true
+    };
     $scope.paneTypeSelector = {
         isOpen: false,
         pane: null,
@@ -99,13 +106,6 @@ calc.controller('CalcController', function ($scope, $cookies) {
         hover: function(t){
             this.hoverType = t;
         },
-        options: {
-            backdropFade: true,
-            dialogFade: true,
-            backdropClick: true,
-            keyboard: true,
-            backdrop: true
-        }
     };
     $scope.confirm = {
         isOpen: false,
@@ -130,13 +130,6 @@ calc.controller('CalcController', function ($scope, $cookies) {
             this.onYes = function(){};
             this.onNo = function(){};
         },
-        options: {
-            backdropFade: true,
-            dialogFade: true,
-            backdropClick: true,
-            keyboard: true,
-            backdrop: true
-        }
     };
     $scope.newWindow = function(){
         $scope.windows[$scope.windows.length] =
@@ -214,19 +207,12 @@ calc.controller('CalcController', function ($scope, $cookies) {
         $scope.dataLoaded = true;
         $scope.$apply();
     });
-    // form, order
-    $scope.s = { state: "order"};
+    // form, order, orderSuccess
+    $scope.s = { state: "form"};
     (function(){
         $scope.order = {
             close: function(){
                 $scope.s.state = "form";
-            },
-            options: {
-                backdropFade: true,
-                dialogFade: true,
-                backdropClick: true,
-                keyboard: true,
-                backdrop: true
             },
             form: {
                 name: "",
@@ -236,8 +222,11 @@ calc.controller('CalcController', function ($scope, $cookies) {
                 comment: ""
             },
             order: function(){
-                this.object.$register(function(){
-
+                this.close();
+                this.object.$register(function(data){
+                    $scope.s.state = "orderSuccess";
+                    $scope.orderId = data.id;
+                    $scope.$apply();
                 });
             }
         };

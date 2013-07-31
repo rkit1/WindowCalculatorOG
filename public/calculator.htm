@@ -342,7 +342,8 @@
                         <h4>Монтаж: {{prices.montageTotal() | rub }}</h4>
                         <h4>Скидка: -{{prices.discount() | rub}}</h4>
                         <h3>Общая сумма: {{prices.total() | rub}}</h3>
-                        <button class="btn btn-large btn-primary" style="width: 100%;">Заказ</button>
+                        <button class="btn btn-large btn-primary" style="width: 100%;"
+                                ng-click="s.state = 'order'">Заказ</button>
                     </div>
                     <div class="text-error" ng-show="hasErrors()">
                         Для рассчета исправьте ошибки.
@@ -352,7 +353,7 @@
         </div>
     </div>
 
-    <div modal="s.state == 'order'" close="order.close()" options="order.$$options">
+    <div modal="s.state == 'order'" close="order.close()" options="modalOptions">
         <div class="modal-body">
             <form class="form-horizontal">
                 <fieldset>
@@ -414,15 +415,14 @@
                     >Отмена</button>
         </div>
     </div>
-    <div modal="confirm.isOpen" close="confirm.close()" options="confirm.options">
+    <div modal="confirm.isOpen" close="confirm.close()" options="modalOptions">
         <div class="modal-header">{{confirm.message}}</div>
         <div class="modal-footer">
             <button class="btn btn-warning" ng-click="confirm.confirm()">Да</button>
             <button class="btn btn-primary cancel" ng-click="confirm.close()">Нет</button>
         </div>
     </div>
-    <div modal="paneTypeSelector.isOpen" close="paneTypeSelector.close()"
-         options="paneTypeSelector.options">
+    <div modal="paneTypeSelector.isOpen" close="paneTypeSelector.close()" options="modalOptions">
         <div class="modal-header">
             <h4>Тип створки:
                 {{{solid: 'глухая', rot: 'поворотная', rotdrop: 'поворотно-откидная'}[paneTypeSelector.hoverType]}}</h4>
@@ -466,7 +466,16 @@
                     >Отмена</button>
         </div>
     </div>
-
+    <div modal="s.state == 'orderSuccess'" close="s.state = 'form'" options="modalOptions">
+        <div class="modal-body">
+            <p>
+                Заказ номер {{ orderId }} принят. Ожидайте звонка менеждера.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary cancel" ng-click="s.state = 'form'">Закрыть</button>
+        </div>
+    </div>
 </div>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>

@@ -32,6 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include ("../includes/db.php");
     $body = file_get_contents('php://input');
-    $st = $db->prepare("INSERT INTO orders (time, value) VALUES (NOW(), ?)");
+    $st = $db->prepare("INSERT INTO orders (time, value) VALUES (NOW(), ?);");
     $st->execute(array($body));
+    $result = $db->query("SELECT LAST_INSERT_ID() as id;")->fetch(PDO::FETCH_ASSOC);
+    echo json_encode($result);
 }
