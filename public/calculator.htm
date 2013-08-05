@@ -415,14 +415,14 @@
 
             </fieldset>
         </form>
-        <button class="btn btn-primary" ng-click="order.order()">Заказ</button>
-        <button class="btn btn-warning cancel" ng-click="s.state = 'form'"
+        <button class="btn btn-primary" ng-disabled="s.busy" ng-click="sendOrder()">Заказ</button>
+        <button class="btn btn-warning cancel" ng-disabled="s.busy" ng-click="s.state = 'form'"
                 >Отмена</button>
     </div>
 
     <div ng-show="s.state == 'orderSuccess'">
         <h2>
-            Заказ номер {{ orderId }} принят. Ожидайте звонка менеждера.
+            Заказ номер {{ s.orderId }} принят. Ожидайте звонка менеждера.
         </h2>
     </div>
 

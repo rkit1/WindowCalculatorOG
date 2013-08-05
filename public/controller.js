@@ -1,3 +1,4 @@
+var gScope;
 Array.prototype.mapSum = function(f) {
     var out = 0;
     angular.forEach(this, function(i){
@@ -11,18 +12,65 @@ calc.factory('data', function($resource){
         $injector.get('$rootScope').$emit('dataIsReady');
     });
 });
-calc.factory('orders', function($resource){
-    return {
-        list: function(){
-            return $http({method: 'GET', url: 'orders.php?list'})
-        },
-        newOrder: function(){
-            var Order = $resource('orders.php', {}, {
-                register: {method:'POST'}
-            });
-            return new Order();
+calc.factory('order', function($cookieStore, $http){
+    return function(){
+        var o = this;
+        this.init = function(){
+            this.orderForm = {
+                name: "",
+                phone: "",
+                delivery: 0,
+                address: "",
+                comment: ""
+            };
+            this.initWindows()
         }
-    }})
+        this.initWindows = function(){
+            this.windows = [new Window()];
+        }
+        this.init();
+        this.load = function(data){
+            if (data.windows.length >= 0) {
+                this.windows.splice(0, this.windows.length);
+                angular.forEach(data.windows, function(w){
+                    o.windows[o.windows.length] = new Window(w);
+                });
+            }
+            for (var k in data.orderFrom) if (data.orderForm.hasOwnProperty(k))
+                this.orderForm[k] = data.orderForm[k];
+        };
+        this.loadFromCookies = function(){
+            if ($cookieStore.get('data')){
+                this.load($cookieStore.get('data'));
+                return true;
+            } else return false;
+        };
+        this.saveToCookies = function(){
+            $cookieStore.put('data', {
+                windows: this.windows,
+                orderForm: this.orderForm
+            });
+        }
+        this.loadFromDB = function(id){
+            return $http ({
+                method: 'GET',
+                url: 'orders.php',
+                params: {id: id}
+            }).success(function(data){
+                o.load(data);
+            });
+        };
+        this.saveToDB = function(){
+            return $http({
+                method: 'POST',
+                url: 'orders.php',
+                data: angular.toJson({windows: this.windows,
+                    orderForm: this.orderForm}),
+                headers: {'Content-Type': 'application/json'},
+            });
+        };
+    };
+});
 calc.factory('profiles', function(){
     return [
         {
@@ -106,8 +154,9 @@ calc.filter('rub', function(){
     }
 });
 var $injector = angular.injector(['Calc']);
-calc.controller('CalcController', function ($scope, $cookies) {
+calc.controller('CalcController', function ($scope, $location) {
     //noinspection JSUnusedGlobalSymbols
+    gScope = $scope;
     $scope.modalOptions = {
         backdropFade: true,
         dialogFade: true,
@@ -163,45 +212,26 @@ calc.controller('CalcController', function ($scope, $cookies) {
         },
     };
     $scope.newWindow = function(){
-        $scope.windows[$scope.windows.length] =
+        $scope.s.windows[$scope.s.windows.length] =
             $scope.currentWindow = new Window($scope.currentWindow);
     };
     $scope.selectWindow = function(w){
-        $scope.currentWindow = $scope.windows[w];
+        $scope.currentWindow = $scope.s.windows[w];
     };
     $scope.removeWindowConfirm = function(w){
         $scope.confirm.open('Точно удалить?', function(){$scope.removeWindow(w)}, function(){});
     };
     $scope.removeWindow = function(w) {
-        $scope.windows.splice($scope.windows.indexOf(w), 1);
-        if ($scope.windows.length < 1) $scope.reset();
-        $scope.currentWindow = $scope.windows[0];
-    };
-    $scope.reset = function(){
-        $scope.currentWindow = new Window();
-        $scope.windows = [$scope.currentWindow];
-        $scope.fullTable = new FullTable($scope);
+        $scope.s.windows.splice($scope.s.windows.indexOf(w), 1);
+        if ($scope.s.windows.length < 1) $scope.s.windows[0] = new Window();
+        $scope.currentWindow = $scope.s.windows[0];
     };
     $scope.save = function(){
-        $cookies.windows = angular.toJson($scope.windows, false);
-    };
-    $scope.restore = function(){
-        var data = eval($cookies.windows);
-        $scope.windows = [];
-        angular.forEach(data, function(d){
-            var w = new Window();
-            for (var k in d)
-                if (d.hasOwnProperty(k)) w[k] = d[k];
-            w.checkSizeErrors();
-            $scope.windows[$scope.windows.length] = w;
-        });
-    };
-    $scope.stateHelper = function(){
-        return angular.toJson($scope.windows, true) + angular.toJson(eval($cookies.windows), true);
+        $scope.order.saveToCookies();
     };
     $scope.hasErrors = function(){
-        for (var i = 0; i < $scope.windows.length; i++ )
-            if ($scope.windows[i].$$errors.hasSome) return true;
+        for (var i = 0; i < $scope.s.windows.length; i++ )
+            if ($scope.s.windows[i].$$errors.hasSome) return true;
         return false;
     };
     $scope.paneClassHelper = function(pane){
@@ -226,55 +256,69 @@ calc.controller('CalcController', function ($scope, $cookies) {
         }
         return out
     };
+    $scope.sendOrder = function(){
+        $scope.s.busy = true;
+        $scope.order.saveToDB().success(function(data){
+            $scope.s.state = 'orderSuccess';
+            $scope.s.orderId = data.id;
+            $scope.s.busy = false;
+            $scope.$apply();
+        }).error(function(){
+            alert('произошла ошибка');
+            $scope.s.busy = false;
+            $scope.$apply();
+        });
+    };
     $scope.dataLoaded = false;
-    if ($cookies.windows != null){
-        $scope.restore();
-        $scope.currentWindow = $scope.windows[0];
-        $scope.fullTable = new FullTable($scope);
+    $scope.order = new ($injector.get('order'))();
+    var match;
+    if (match = $location.path().match(/^\/order\/([0-9]+)$/i)){
+        $scope.order.loadFromDB(match[1]);
+        $scope.readOnly = true;
     }
-    else $scope.reset();
-    $scope.prices = new Prices($scope);
+    else {
+        $scope.order.loadFromCookies();
+        $scope.readOnly = false;
+    }
     $injector.get('$rootScope').$on('dataIsReady', function(){
         $scope.dataLoaded = true;
         $scope.$apply();
     });
     // form, order, orderSuccess
-    $scope.s = { state: "form"};
-    (function(){
-        $scope.order = {
-            form: {
-                name: "",
-                phone: "",
-                delivery: 0,
-                address: "",
-                comment: ""
-            },
-            order: function(){
-                this.object.$register(function(data){
-                    $scope.s.state = "orderSuccess";
-                    $scope.orderId = data.id;
-                    $scope.$apply();
-                });
-            }
-        };
-        $scope.order.object = new $injector.get('orders').newOrder();
-        $scope.order.object.form = $scope.order.form;
-        $scope.order.object.windows = $scope.windows;
-    })();
+    $scope.s = { state: "form"
+               , windows: $scope.order.windows
+               , orderFrom: $scope.order.orderForm };
+    $scope.fullTable = new FullTable($scope);
+    $scope.currentWindow = $scope.s.windows[0];
+    $scope.prices = new Prices($scope);
 });
-
+calc.controller('OrdersController', function($scope){
+    // list, order + id
+    $scope.s = { state: "list" }
+    $scope.selectItem = function(item){
+        $scope.s.state = 'order';
+        $scope.s.id = item.id;
+        $scope.order = $injector.get('orders').getOrder(item.id);
+    };
+    $injector.get('orders').list().success(function(data){
+        $scope.$apply(function(s){
+            s.list = data;
+        });
+    });
+});
 
 Prices = function($scope){
     var pt = this;
     var profiles = $injector.get('profiles');
+    var ws = $scope.s.windows;
 
     this.totalWindows = function(){
-        return $scope.windows.mapSum(function(w){
+        return ws.mapSum(function(w){
             return pt.product(w) * w.quantity;
         });
     };
     this.total = function(){
-        $scope.save();
+        //$scope.save();
         return pt.totalWindows() + pt.otkosyTotal() + pt.netTotal()
              + pt.podokonnikTotal() + pt.otlivTotal()
              + pt.montageTotal() - pt.discount();
@@ -286,7 +330,7 @@ Prices = function($scope){
         return $scope.fullTable.podokonnikPrice(w);
     };
     this.podokonnikTotal = function(){
-        return $scope.windows.mapSum(function(w){
+        return ws.mapSum(function(w){
             return pt.podokonnik(w);
         });
     };
@@ -294,7 +338,7 @@ Prices = function($scope){
         return $scope.fullTable.otlivPrice(w);
     };
     this.otlivTotal = function(){
-        return $scope.windows.mapSum(function(w){
+        return ws.mapSum(function(w){
             return pt.otliv(w);
         });
     };
@@ -302,7 +346,7 @@ Prices = function($scope){
         return $scope.fullTable.montagePrice(w);
     };
     this.montageTotal = function(){
-        return $scope.windows.mapSum(function(w){
+        return ws.mapSum(function(w){
             return pt.montage(w)
         });
     };
@@ -318,14 +362,14 @@ Prices = function($scope){
     this.otkosyTotal = function(){
         var out = 0;
         var pt = this;
-        angular.forEach($scope.windows, function(w){
+        angular.forEach(ws, function(w){
             out += pt.otkosy(w);
         });
         return out;
     };
     this.countProducts = function(){
         var out = 0;
-        angular.forEach($scope.windows, function(w){
+        angular.forEach(ws, function(w){
             out += w.quantity;
         });
         return out;
@@ -334,7 +378,7 @@ Prices = function($scope){
         return $scope.fullTable.netPrice(w)
     };
     this.netTotal = function(){
-        return $scope.windows.mapSum(function(w){
+        return ws.mapSum(function(w){
             return pt.net(w) * w.quantity;
         });
     };
@@ -359,6 +403,7 @@ Window = function(w){
     //noinspection JSUnusedGlobalSymbols
     this.otkosy = {type:-1};
     this.setType('1p');
+    if (w) for (i in w) if (w.hasOwnProperty(i)) this[i] = w[i];
     this.checkSizeErrors();
     return this;
 };
@@ -658,7 +703,7 @@ PerWindowTable = function(w){
     return this;
 };
 FullTable = function($scope){
-    var ws = $scope.windows;
+    var ws = $scope.s.windows;
     var discount = $injector.get('discount');
     var ft = this;
     //noinspection JSUnusedGlobalSymbols
