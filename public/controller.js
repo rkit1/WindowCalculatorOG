@@ -36,7 +36,8 @@ calc.factory('order', function($cookieStore, $http){
                     o.windows[o.windows.length] = new Window(w);
                 });
             }
-            for (var k in data.orderFrom) if (data.orderForm.hasOwnProperty(k))
+            for (var k in data.orderForm)
+                if (data.orderForm.hasOwnProperty(k))
                 this.orderForm[k] = data.orderForm[k];
         };
         this.loadFromCookies = function(){
@@ -213,10 +214,10 @@ calc.controller('CalcController', function ($scope, $location) {
     };
     $scope.newWindow = function(){
         $scope.s.windows[$scope.s.windows.length] =
-            $scope.currentWindow = new Window($scope.currentWindow);
+            $scope.s.currentWindow = new Window($scope.s.currentWindow);
     };
     $scope.selectWindow = function(w){
-        $scope.currentWindow = $scope.s.windows[w];
+        $scope.s.currentWindow = $scope.s.windows[w];
     };
     $scope.removeWindowConfirm = function(w){
         $scope.confirm.open('Точно удалить?', function(){$scope.removeWindow(w)}, function(){});
@@ -224,7 +225,7 @@ calc.controller('CalcController', function ($scope, $location) {
     $scope.removeWindow = function(w) {
         $scope.s.windows.splice($scope.s.windows.indexOf(w), 1);
         if ($scope.s.windows.length < 1) $scope.s.windows[0] = new Window();
-        $scope.currentWindow = $scope.s.windows[0];
+        $scope.s.currentWindow = $scope.s.windows[0];
     };
     $scope.save = function(){
         $scope.order.saveToCookies();
@@ -273,8 +274,11 @@ calc.controller('CalcController', function ($scope, $location) {
     $scope.order = new ($injector.get('order'))();
     var match;
     if (match = $location.path().match(/^\/order\/([0-9]+)$/i)){
-        $scope.order.loadFromDB(match[1]);
-        $scope.readOnly = true;
+        $scope.order.loadFromDB(match[1]).then(function(){
+            $scope.readOnly = true;
+            $scope.s.currentWindow = $scope.s.windows[0];
+            $scope.$apply();
+        });
     }
     else {
         $scope.order.loadFromCookies();
@@ -286,24 +290,15 @@ calc.controller('CalcController', function ($scope, $location) {
     });
     // form, order, orderSuccess
     $scope.s = { state: "form"
+               , currentWindow: $scope.order.windows[0]
                , windows: $scope.order.windows
-               , orderFrom: $scope.order.orderForm };
+               , orderForm: $scope.order.orderForm };
     $scope.fullTable = new FullTable($scope);
-    $scope.currentWindow = $scope.s.windows[0];
     $scope.prices = new Prices($scope);
 });
-calc.controller('OrdersController', function($scope){
-    // list, order + id
-    $scope.s = { state: "list" }
-    $scope.selectItem = function(item){
-        $scope.s.state = 'order';
-        $scope.s.id = item.id;
-        $scope.order = $injector.get('orders').getOrder(item.id);
-    };
-    $injector.get('orders').list().success(function(data){
-        $scope.$apply(function(s){
-            s.list = data;
-        });
+calc.controller('OrdersController', function($scope, $http){
+    $http.get('orders.php?list').success(function(data){
+        $scope.list = data;
     });
 });
 

@@ -35,8 +35,8 @@
         <div class="row">
             <div class="span8">
                 <ul class="nav nav-tabs">
-                    <li ng-repeat="window in windows"
-                        ng-class="{active: window == currentWindow}">
+                    <li ng-repeat="window in s.windows"
+                        ng-class="{active: window == s.currentWindow}">
                         <div class="addRemove"><a class="text-error" ng-click="removeWindowConfirm(window)">
                             <i class="icon-remove"></i> Удалить</a></div>
                         <a ng-click="selectWindow($index)">
@@ -69,29 +69,29 @@
                         <div id="productTypeSelector">
                                 Тип:
                                 <div class="item">
-                                    <a ng-click="currentWindow.setType('1p')"
-                                       ng-class="{'selected':true}[currentWindow.type=='1p']"
+                                    <a ng-click="s.currentWindow.setType('1p')"
+                                       ng-class="{'selected':true}[s.currentWindow.type=='1p']"
                                             ><img alt="Одностворчатое окно"
                                                   title="Одностворчатое окно"
                                                   src="img/window1Pthumb.png"></a>
                                 </div>
                                 <div class="item">
-                                    <a ng-click="currentWindow.setType('2p')"
-                                       ng-disabled="currentWindow.type=='2p'"
+                                    <a ng-click="s.currentWindow.setType('2p')"
+                                       ng-disabled="s.currentWindow.type=='2p'"
                                             ><img alt="Двустворчатое окно"
                                                   title="Двуостворчатое окно"
                                                   src="img/window2Pthumb.png"></a>
                                 </div>
                                 <div class="item">
-                                    <a ng-click="currentWindow.setType('3p')"
-                                       ng-disabled="currentWindow.type=='3p'"
+                                    <a ng-click="s.currentWindow.setType('3p')"
+                                       ng-disabled="s.currentWindow.type=='3p'"
                                             ><img alt="Трехстворчатое окно"
                                                   title="Трехстворчатое окно"
                                                   src="img/window3Pthumb.png"></a>
                                 </div>
                                 <div class="item">
-                                    <a ng-click="currentWindow.setType('door')"
-                                       ng-disabled="currentWindow.type=='door'"
+                                    <a ng-click="s.currentWindow.setType('door')"
+                                       ng-disabled="s.currentWindow.type=='door'"
                                             ><img alt="Балконная дверь"
                                                   title="Балконная дверь"
                                                   src="img/doorthumb.png"></a>
@@ -99,33 +99,33 @@
                             </div>
                         <br>
                         <!-- Изображение окна -->
-                            <table id="fullWindowImage" ng-show="{'1p': true,'2p': true,'3p': true}[currentWindow.type]">
+                            <table id="fullWindowImage" ng-show="{'1p': true,'2p': true,'3p': true}[s.currentWindow.type]">
                                 <tr>
                                     <td colspan="2"></td>
-                                    <td colspan="{{currentWindow.getActivePanes().length}}"
+                                    <td colspan="{{s.currentWindow.getActivePanes().length}}"
                                         class="widthSelector-input">
                                         <label>
-                                            <input type="number" class="dimension" ng-model="currentWindow.width"
-                                                   ng-change="currentWindow.recalculateWidth()"
-                                                   ng-class="{myError:currentWindow.$$errors.errors.paneWindowWidthMismatch}">
+                                            <input type="number" class="dimension" ng-model="s.currentWindow.width"
+                                                   ng-change="s.currentWindow.recalculateWidth()"
+                                                   ng-class="{myError:s.currentWindow.$$errors.errors.paneWindowWidthMismatch}">
                                         </label>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="2"></td>
-                                    <td colspan="{{currentWindow.getActivePanes().length}}"
+                                    <td colspan="{{s.currentWindow.getActivePanes().length}}"
                                         class="windowWidthSelector"
-                                        ng-class="{true:'myError'}[currentWindow.$$errors.widthError]">
+                                        ng-class="{true:'myError'}[s.currentWindow.$$errors.widthError]">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="heightSelector-input">
                                         <label>
                                             <input type="number" class="dimension"
-                                                   ng-model="currentWindow.height">
+                                                   ng-model="s.currentWindow.height">
                                         </label></td>
                                     <td class="windowHeightSelector"></td>
-                                    <td ng-repeat="pane in currentWindow.getActivePanes()"
+                                    <td ng-repeat="pane in s.currentWindow.getActivePanes()"
                                         title="{{{solid: 'Глухая створка', rot: 'Поворотная створка', rotdrop: 'Поворотно-откидная створка'}[pane.type]}}"
                                         class="paneType {{paneClassHelper(pane)}}" ng-click="paneTypeSelector.open(pane)">
 
@@ -133,22 +133,22 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2"></td>
-                                    <td ng-repeat="pane in currentWindow.getActivePanes()" class="paneWidthSelector">
+                                    <td ng-repeat="pane in s.currentWindow.getActivePanes()" class="paneWidthSelector">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="2"></td>
-                                    <td ng-repeat="pane in currentWindow.getActivePanes()" class="widthSelector-input">
+                                    <td ng-repeat="pane in s.currentWindow.getActivePanes()" class="widthSelector-input">
                                         <label>
                                             <input type="number" class="dimension" ng-model="pane.width"
                                                    ng-readonly="$last"
-                                                   ng-change="currentWindow.recalculateWidth()"
-                                                   ng-class="{true:'myError'}[currentWindow.$$errors.paneErrors[$index]]">
+                                                   ng-change="s.currentWindow.recalculateWidth()"
+                                                   ng-class="{true:'myError'}[s.currentWindow.$$errors.paneErrors[$index]]">
                                         </label>
                                     </td>
                                 <tr>
                                     <td colspan="2"></td>
-                                    <td ng-repeat="pane in currentWindow.getActivePanes()"  class="panesAccessories">
+                                    <td ng-repeat="pane in s.currentWindow.getActivePanes()"  class="panesAccessories">
                                         <div ng-show="pane.type=='rot' || pane.type=='rotdrop'" style="text-align: center">
                                             <!--<label><input type="checkbox" ng-model="pane.key"> ручка с ключом</label>-->
                                             <label><input type="checkbox" ng-model="pane.net"> москитная сетка</label>
@@ -159,12 +159,12 @@
 
 
                             <!-- Изображение двери -->
-                            <table ng-show="currentWindow.type == 'door'">
+                            <table ng-show="s.currentWindow.type == 'door'">
                                 <tr>
                                     <td colspan="2"></td>
                                     <td class="widthSelector-input">
                                         <label>
-                                            <input type="number" class="dimension" ng-model="currentWindow.width">
+                                            <input type="number" class="dimension" ng-model="s.currentWindow.width">
                                         </label>
                                     </td>
                                 </tr>
@@ -176,7 +176,7 @@
                                     <td class="heightSelector-input">
                                         <label>
                                             <input type="number" class="dimension"
-                                                   ng-model="currentWindow.height">
+                                                   ng-model="s.currentWindow.height">
                                         </label>
                                     </td>
                                     <td class="doorHeightSelector"></td>
@@ -190,10 +190,10 @@
                             <div class="text-info"
                                 >Нажмите по створке для изменения типа</div>
                             <div class="text-error"
-                                 ng-show="currentWindow.$$errors.errors.paneTooSmall"
+                                 ng-show="s.currentWindow.$$errors.errors.paneTooSmall"
                                     >Ширина створки должна быть не меньше 100мм.</div>
                             <div class="text-error"
-                                 ng-show="currentWindow.$$errors.errors.paneWindowWidthMismatch"
+                                 ng-show="s.currentWindow.$$errors.errors.paneWindowWidthMismatch"
                                     >Общая ширина створок больше ширины окна</div>
 
 
@@ -206,7 +206,7 @@
                                     <label for="profile">Профиль</label>
                                 </td>
                                 <td>
-                                    <select ng-model="currentWindow.profile" id="profile"
+                                    <select ng-model="s.currentWindow.profile" id="profile"
                                             class="span3">
                                         <option value="0">Veka</option>
                                         <option value="1">Rehau</option>
@@ -220,7 +220,7 @@
                                     <label for="steklopaket">Стеклопакет</label>
                                 </td>
                                 <td>
-                                    <select ng-model="currentWindow.steklopaket" id="steklopaket"
+                                    <select ng-model="s.currentWindow.steklopaket" id="steklopaket"
                                             class="span3">
                                         <option value="1">Однокамерный</option>
                                         <option value="2">Двухкамерный</option>
@@ -233,7 +233,7 @@
                                     <label for="laminate">Ламинация</label>
                                 </td>
                                 <td>
-                                    <select ng-model="currentWindow.laminate" id="laminate"
+                                    <select ng-model="s.currentWindow.laminate" id="laminate"
                                             class="span3">
                                         <option value="0">нет</option>
                                         <option value="1">односторонняя</option>
@@ -245,20 +245,20 @@
                             <tr>
                                 <td></td>
                                 <td>Изделие</td>
-                                <td>{{prices.product(currentWindow) | rub}}</td>
+                                <td>{{prices.product(s.currentWindow) | rub}}</td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td>Москитная сетка</td>
-                                <td>{{prices.net(currentWindow) | rub}}</td>
+                                <td>{{prices.net(s.currentWindow) | rub}}</td>
                             </tr>
                             <tr><td><br></td><td></td><td></td></tr>
-                            <tr ng-show="currentWindow.isActuallyWindow()">
+                            <tr ng-show="s.currentWindow.isActuallyWindow()">
                                 <td>
                                     <label for="podokonniki">Подоконник</label>
                                 </td>
                                 <td>
-                                    <select ng-model="currentWindow.podokonniki.type" id="podokonniki"
+                                    <select ng-model="s.currentWindow.podokonniki.type" id="podokonniki"
                                             class="span3">
                                         <option value="-1">Не нужен</option>
                                         <option value="0">100мм</option>
@@ -274,14 +274,14 @@
                                         <option value="10">600мм</option>
                                     </select>
                                 </td>
-                                <td>{{prices.podokonnik(currentWindow) | rub}}</td>
+                                <td>{{prices.podokonnik(s.currentWindow) | rub}}</td>
                             </tr>
-                            <tr ng-show="currentWindow.isActuallyWindow()">
+                            <tr ng-show="s.currentWindow.isActuallyWindow()">
                                 <td>
                                     <label for="otlivy">Отлив</label>
                                 </td>
                                 <td>
-                                    <select ng-model="currentWindow.otlivy.type" id="otlivy"
+                                    <select ng-model="s.currentWindow.otlivy.type" id="otlivy"
                                             class="span3">
                                         <option value="-1">Не нужен</option>
                                         <option value="0">0-110мм</option>
@@ -295,14 +295,14 @@
                                         <option value="8">341-420мм</option>
                                     </select>
                                 </td>
-                                <td>{{prices.otliv(currentWindow) | rub}}</td>
+                                <td>{{prices.otliv(s.currentWindow) | rub}}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="otkosy">Откосы</label>
                                 </td>
                                 <td>
-                                    <select ng-model="currentWindow.otkosy.type" id="otkosy"
+                                    <select ng-model="s.currentWindow.otkosy.type" id="otkosy"
                                             class="span3">
                                         <option value="-1">Не нужны</option>
                                         <option value="0">до 25 см</option>
@@ -311,20 +311,20 @@
                                         <option value="3">до 60 см</option>
                                     </select>
                                 </td>
-                                <td>{{prices.otkosy(currentWindow) | rub}}</td>
+                                <td>{{prices.otkosy(s.currentWindow) | rub}}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="montage">Монтаж</label>
                                 </td>
                                 <td>
-                                    <select ng-model="currentWindow.montage" id="montage"
+                                    <select ng-model="s.currentWindow.montage" id="montage"
                                             class="span3">
                                         <option value="0">Не нужен</option>
                                         <option value="1">Нужен</option>
                                     </select>
                                 </td>
-                                <td>{{prices.montage(currentWindow) | rub}}</td>
+                                <td>{{prices.montage(s.currentWindow) | rub}}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -334,7 +334,7 @@
                         <label>Количество
                             <input type="number" class="input-mini"
                                    min="1"
-                                   ng-model="currentWindow.quantity"><br>
+                                   ng-model="s.currentWindow.quantity"><br>
                         </label>
 
                         -->
@@ -370,7 +370,7 @@
                 <div class="control-group">
                     <label class="control-label" for="name">Имя</label>
                     <div class="controls">
-                        <input ng-model="order.form.name" id="name" placeholder="" class="input-xlarge" required="" type="text">
+                        <input ng-model="s.orderForm.name" id="name" placeholder="" class="input-xlarge" required="" type="text">
 
                     </div>
                 </div>
@@ -379,7 +379,7 @@
                 <div class="control-group">
                     <label class="control-label" for="phone">Номер телефона</label>
                     <div class="controls">
-                        <input id="phone" ng-model="order.form.phone" placeholder="" class="input-xlarge" required="" type="text">
+                        <input id="phone" ng-model="s.orderForm.phone" placeholder="" class="input-xlarge" required="" type="text">
 
                     </div>
                 </div>
@@ -388,7 +388,7 @@
                 <div class="control-group">
                     <label class="control-label" for="delivery">Доставка</label>
                     <div class="controls">
-                        <select name="delivery" id="delivery" ng-model="order.form.delivery"
+                        <select name="delivery" id="delivery" ng-model="s.orderForm.delivery"
                                 class="input-xlarge">
                             <option value="0">По Москве ({{prices.delivery() | rub}})</option>
                             <option value="1">Самовывоз</option>
@@ -401,7 +401,7 @@
                 <div class="control-group">
                     <label class="control-label" for="address">Адрес доставки</label>
                     <div class="controls">
-                        <textarea id="address" ng-model="order.form.address" class="input-xlarge"></textarea>
+                        <textarea id="address" ng-model="s.orderForm.address" class="input-xlarge"></textarea>
                     </div>
                 </div>
 
@@ -409,7 +409,7 @@
                 <div class="control-group">
                     <label class="control-label" for="comment">Комментарий</label>
                     <div class="controls">
-                        <textarea id="comment" ng-model="order.form.comment" class="input-xlarge"></textarea>
+                        <textarea id="comment" ng-model="s.orderForm.comment" class="input-xlarge"></textarea>
                     </div>
                 </div>
 
