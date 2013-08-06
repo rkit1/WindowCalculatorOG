@@ -106,6 +106,7 @@
                                         class="widthSelector-input">
                                         <label>
                                             <input type="number" class="dimension" ng-model="s.currentWindow.width"
+                                                   ng-disabled="readOnly"
                                                    ng-change="s.currentWindow.recalculateWidth()"
                                                    ng-class="{myError:s.currentWindow.$$errors.errors.paneWindowWidthMismatch}">
                                         </label>
@@ -122,6 +123,7 @@
                                     <td class="heightSelector-input">
                                         <label>
                                             <input type="number" class="dimension"
+                                                   ng-disabled="readOnly"
                                                    ng-model="s.currentWindow.height">
                                         </label></td>
                                     <td class="windowHeightSelector"></td>
@@ -141,6 +143,7 @@
                                     <td ng-repeat="pane in s.currentWindow.getActivePanes()" class="widthSelector-input">
                                         <label>
                                             <input type="number" class="dimension" ng-model="pane.width"
+                                                   ng-disabled="readOnly"
                                                    ng-readonly="$last"
                                                    ng-change="s.currentWindow.recalculateWidth()"
                                                    ng-class="{true:'myError'}[s.currentWindow.$$errors.paneErrors[$index]]">
@@ -151,7 +154,7 @@
                                     <td ng-repeat="pane in s.currentWindow.getActivePanes()"  class="panesAccessories">
                                         <div ng-show="pane.type=='rot' || pane.type=='rotdrop'" style="text-align: center">
                                             <!--<label><input type="checkbox" ng-model="pane.key"> ручка с ключом</label>-->
-                                            <label><input type="checkbox" ng-model="pane.net"> москитная сетка</label>
+                                            <label><input ng-disabled="readOnly" type="checkbox" ng-model="pane.net"> москитная сетка</label>
                                         </div>
                                     </td>
                                 </tr>
@@ -164,7 +167,8 @@
                                     <td colspan="2"></td>
                                     <td class="widthSelector-input">
                                         <label>
-                                            <input type="number" class="dimension" ng-model="s.currentWindow.width">
+                                            <input ng-disabled="readOnly" type="number" class="dimension"
+                                                   ng-model="s.currentWindow.width">
                                         </label>
                                     </td>
                                 </tr>
@@ -175,7 +179,7 @@
                                 <tr>
                                     <td class="heightSelector-input">
                                         <label>
-                                            <input type="number" class="dimension"
+                                            <input ng-disabled="readOnly" type="number" class="dimension"
                                                    ng-model="s.currentWindow.height">
                                         </label>
                                     </td>
@@ -206,7 +210,7 @@
                                     <label for="profile">Профиль</label>
                                 </td>
                                 <td>
-                                    <select ng-model="s.currentWindow.profile" id="profile"
+                                    <select ng-disabled="readOnly" ng-model="s.currentWindow.profile" id="profile"
                                             class="span3">
                                         <option value="0">Veka</option>
                                         <option value="1">Rehau</option>
@@ -220,7 +224,7 @@
                                     <label for="steklopaket">Стеклопакет</label>
                                 </td>
                                 <td>
-                                    <select ng-model="s.currentWindow.steklopaket" id="steklopaket"
+                                    <select ng-disabled="readOnly" ng-model="s.currentWindow.steklopaket" id="steklopaket"
                                             class="span3">
                                         <option value="1">Однокамерный</option>
                                         <option value="2">Двухкамерный</option>
@@ -233,7 +237,7 @@
                                     <label for="laminate">Ламинация</label>
                                 </td>
                                 <td>
-                                    <select ng-model="s.currentWindow.laminate" id="laminate"
+                                    <select ng-disabled="readOnly" ng-model="s.currentWindow.laminate" id="laminate"
                                             class="span3">
                                         <option value="0">нет</option>
                                         <option value="1">односторонняя</option>
@@ -258,7 +262,7 @@
                                     <label for="podokonniki">Подоконник</label>
                                 </td>
                                 <td>
-                                    <select ng-model="s.currentWindow.podokonniki.type" id="podokonniki"
+                                    <select ng-disabled="readOnly" ng-model="s.currentWindow.podokonniki.type" id="podokonniki"
                                             class="span3">
                                         <option value="-1">Не нужен</option>
                                         <option value="0">100мм</option>
@@ -281,7 +285,7 @@
                                     <label for="otlivy">Отлив</label>
                                 </td>
                                 <td>
-                                    <select ng-model="s.currentWindow.otlivy.type" id="otlivy"
+                                    <select ng-disabled="readOnly" ng-model="s.currentWindow.otlivy.type" id="otlivy"
                                             class="span3">
                                         <option value="-1">Не нужен</option>
                                         <option value="0">0-110мм</option>
@@ -302,7 +306,7 @@
                                     <label for="otkosy">Откосы</label>
                                 </td>
                                 <td>
-                                    <select ng-model="s.currentWindow.otkosy.type" id="otkosy"
+                                    <select ng-disabled="readOnly" ng-model="s.currentWindow.otkosy.type" id="otkosy"
                                             class="span3">
                                         <option value="-1">Не нужны</option>
                                         <option value="0">до 25 см</option>
@@ -318,7 +322,7 @@
                                     <label for="montage">Монтаж</label>
                                 </td>
                                 <td>
-                                    <select ng-model="s.currentWindow.montage" id="montage"
+                                    <select ng-disabled="readOnly" ng-model="s.currentWindow.montage" id="montage"
                                             class="span3">
                                         <option value="0">Не нужен</option>
                                         <option value="1">Нужен</option>
@@ -329,15 +333,6 @@
                             </tbody>
                         </table>
 
-
-                        <!--
-                        <label>Количество
-                            <input type="number" class="input-mini"
-                                   min="1"
-                                   ng-model="s.currentWindow.quantity"><br>
-                        </label>
-
-                        -->
                 </div>
             </div>
             <div class="span4">
@@ -363,14 +358,15 @@
     </div>
 
     <div ng-show="s.state == 'order'">
-        <form class="form-horizontal">
+        <form class="form-horizontal" name="orderForm">
             <fieldset>
                 <legend>Заказ</legend>
                 <!-- Имя -->
                 <div class="control-group">
                     <label class="control-label" for="name">Имя</label>
                     <div class="controls">
-                        <input ng-model="s.orderForm.name" id="name" placeholder="" class="input-xlarge" required="" type="text">
+                        <input ng-disabled="readOnly"
+                               ng-model="s.orderForm.name" id="name" placeholder="" class="input-xlarge" required="" type="text">
 
                     </div>
                 </div>
@@ -379,7 +375,8 @@
                 <div class="control-group">
                     <label class="control-label" for="phone">Номер телефона</label>
                     <div class="controls">
-                        <input id="phone" ng-model="s.orderForm.phone" placeholder="" class="input-xlarge" required="" type="text">
+                        <input id="phone" ng-disabled="readOnly"
+                               ng-model="s.orderForm.phone" placeholder="" class="input-xlarge" required="" type="text">
 
                     </div>
                 </div>
@@ -388,7 +385,8 @@
                 <div class="control-group">
                     <label class="control-label" for="delivery">Доставка</label>
                     <div class="controls">
-                        <select name="delivery" id="delivery" ng-model="s.orderForm.delivery"
+                        <select name="delivery" ng-disabled="readOnly"
+                                id="delivery" ng-model="s.orderForm.delivery"
                                 class="input-xlarge">
                             <option value="0">По Москве ({{prices.delivery() | rub}})</option>
                             <option value="1">Самовывоз</option>
@@ -401,7 +399,9 @@
                 <div class="control-group">
                     <label class="control-label" for="address">Адрес доставки</label>
                     <div class="controls">
-                        <textarea id="address" ng-model="s.orderForm.address" class="input-xlarge"></textarea>
+                        <textarea ng-disabled="readOnly"
+                                  ng-required="s.orderForm.delivery == 0"
+                                  id="address" ng-model="s.orderForm.address" class="input-xlarge"></textarea>
                     </div>
                 </div>
 
@@ -409,13 +409,13 @@
                 <div class="control-group">
                     <label class="control-label" for="comment">Комментарий</label>
                     <div class="controls">
-                        <textarea id="comment" ng-model="s.orderForm.comment" class="input-xlarge"></textarea>
+                        <textarea ng-disabled="readOnly" id="comment" ng-model="s.orderForm.comment" class="input-xlarge"></textarea>
                     </div>
                 </div>
 
             </fieldset>
         </form>
-        <button class="btn btn-primary" ng-disabled="s.busy" ng-click="sendOrder()">Заказ</button>
+        <button class="btn btn-primary" ng-disabled="s.busy || readOnly || orderForm.$invalid" ng-click="sendOrder()">Заказ</button>
         <button class="btn btn-warning cancel" ng-disabled="s.busy" ng-click="s.state = 'form'"
                 >Отмена</button>
     </div>
