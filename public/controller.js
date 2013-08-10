@@ -123,13 +123,18 @@ calc.factory('discountParserPrinter', function(){
          * @returns {Array}
          */
         parse: function(str){
-            var d = str.match(/(\d+)\s+(\d+)/g);
+            var lines = str.split(/\n/m);
             var out = [];
-            for (i = 0; i < d.length; i++)
-            {
-                out[i] = {
-                    minSum: d[i][1],
-                    discount: d[i][2]
+            for (i = 0; i < lines.length; i++) {
+                var d = lines[i].match(/^\s*(\d+)\s+(\d+)\s*$/);
+                if (!d) {
+                    if (lines[i].match(/^\s+$/) || lines[i] == "") {}
+                    else throw "ошибка: не могу разобрать строку " + lines[i];
+                } else {
+                    out[out.length] = {
+                        minSum: d[1],
+                        discount: d[2]
+                    }
                 }
             }
             return out;
@@ -301,7 +306,32 @@ calc.controller('OrdersController', function($scope, $http){
         $scope.list = data;
     });
 });
-
+calc.controller('SettingsController', function($scope){
+    $scope.data = $injector.get('data');
+    $scope.pp = $injector.get('discountParserPrinter');
+    $scope.discT = {
+        encoded: "",
+        error: false,
+        tableOrError: function(){
+            return this.error ? this.error : $scope.data.discountTable;
+        },
+        read: function() {
+            try {
+                $scope.data.discountTable = $scope.pp.parse($scope.discT.encoded);
+                this.error = false;
+            } catch(err) {
+                this.error = err;
+            }
+        }
+    }
+    $scope.dataSource = function(){
+        return $scope.data.toSource();
+    };
+    $injector.get('$rootScope').$on('dataIsReady', function(){
+        $scope.discT.encoded = $scope.pp.print($scope.data.discountTable);
+        $scope.$apply();
+    });
+});
 Prices = function($scope){
     var pt = this;
     var profiles = $injector.get('profiles');

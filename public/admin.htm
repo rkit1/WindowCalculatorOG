@@ -4,14 +4,24 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
     <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <style>
+        ng-error{border-color: red;}
+    </style>
     <title></title>
 </head>
 <body xmlns:ng="http://angularjs.org" id="ng-app" ng-app="Calc">
-<div ng-controller="SettingsController">
-    <fieldset ng-repeat="r in data.discountTable">
-        <input ng-model="r.minSum" style="text-align: right" class="span2">р.
-        <input ng-model="r.discount" style="text-align: right" class="span1">%
-    </fieldset>
+<div ng-controller="SettingsController" class="container">
+    <form>
+        <div class="row">
+            <div class="span4">
+                <label>
+                    <textarea class="input-medium" rows="10" style="text-align: right;"
+                              ng-model="discT.encoded" ng-change="discT.read()"></textarea>
+                </label>
+            </div>
+            <div class="span3">{{ discT.tableOrError() }}</div>
+        </div>
+    </form>
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-cookies.min.js"></script>
