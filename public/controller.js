@@ -105,16 +105,21 @@ calc.factory('discount', function(){
         }
     };
 });
-calc.factory('currency', function(){
+calc.factory('currency', function($rootScope, data){
     //noinspection JSUnusedGlobalSymbols,JSUnusedGlobalSymbols
-    return{
+    var out = {
+        rate: 32,
         toRoubles: function(usd){
-            return usd * 32;
+            return usd * this.rate;
         },
         toUSD: function(rub){
-            return rub * (1/32);
+            return rub / this.rate;
         }
     };
+    $rootScope.$on('dataIsReady', function(){
+        out.rate = data.currency.rate;
+    });
+    return out
 });
 calc.factory('discountParserPrinter', function(){
     return {
@@ -129,7 +134,7 @@ calc.factory('discountParserPrinter', function(){
                 var d = lines[i].match(/^\s*(\d+)\s+(\d+)\s*$/);
                 if (!d) {
                     if (lines[i].match(/^\s+$/) || lines[i] == "") {}
-                    else throw "ошибка: не могу разобрать строку " + lines[i];
+                    else throw "не могу разобрать строку \n" + lines[i];
                 } else {
                     out[out.length] = {
                         minSum: d[1],
@@ -158,6 +163,32 @@ calc.filter('rub', function(){
         rub = Math.round(rub);
         return rub + "р";
     }
+});
+calc.directive('validate', function() {
+    return {
+        require: 'ngModel',
+        link: function(scope, ele, attrs, ctrl) {
+            scope.$watch(attrs.ngModel, function() {
+                ctrl.$setValidity('validate', !scope.$eval(attrs.validate));
+            });
+        }
+    }
+});
+calc.directive('smartfloat', function() {
+    return {
+        require: 'ngModel',
+        link: function(scope, elm, attrs, ctrl) {
+            ctrl.$parsers.unshift(function(viewValue) {
+                if (/^\-?\d+((\.|\,)\d+)?$/.test(viewValue)) {
+                    ctrl.$setValidity('float', true);
+                    return parseFloat(viewValue.replace(',', '.'));
+                } else {
+                    ctrl.$setValidity('float', false);
+                    return undefined;
+                }
+            });
+        }
+    };
 });
 var $injector = angular.injector(['Calc']);
 calc.controller('CalcController', function ($scope, $location) {
@@ -307,14 +338,12 @@ calc.controller('OrdersController', function($scope, $http){
     });
 });
 calc.controller('SettingsController', function($scope){
+    gScope = $scope;
     $scope.data = $injector.get('data');
     $scope.pp = $injector.get('discountParserPrinter');
     $scope.discT = {
         encoded: "",
         error: false,
-        tableOrError: function(){
-            return this.error ? this.error : $scope.data.discountTable;
-        },
         read: function() {
             try {
                 $scope.data.discountTable = $scope.pp.parse($scope.discT.encoded);
@@ -324,11 +353,26 @@ calc.controller('SettingsController', function($scope){
             }
         }
     }
-    $scope.dataSource = function(){
-        return $scope.data.toSource();
+    $scope.s = { busy: true };
+    $scope.save = function(){
+        $scope.s.result = "";
+        $scope.s.busy = true;
+        $scope.data.$save({},
+            function(){
+                $scope.s.busy = false;
+                $scope.s.result = "success";
+                $scope.$apply();
+            },
+            function(){
+                $scope.s.busy = false;
+                $scope.s.result = "failure";
+                $scope.$apply();
+            });
     };
     $injector.get('$rootScope').$on('dataIsReady', function(){
         $scope.discT.encoded = $scope.pp.print($scope.data.discountTable);
+        $scope.currency = $scope.data.currency;
+        $scope.s.busy = false;
         $scope.$apply();
     });
 });

@@ -5,22 +5,50 @@
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
     <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
     <style>
-        ng-error{border-color: red;}
+        .ng-invalid {
+            border-color: red !important;
+        }
+        .ng-invalid:focus {
+            box-shadow: 0 1px 1px rgba(0,0,0,0.075) inset, 0 0 8px rgba(255,0,0,0.6) !important;
+        }
     </style>
     <title></title>
 </head>
 <body xmlns:ng="http://angularjs.org" id="ng-app" ng-app="Calc">
 <div ng-controller="SettingsController" class="container">
-    <form>
-        <div class="row">
-            <div class="span4">
-                <label>
-                    <textarea class="input-medium" rows="10" style="text-align: right;"
-                              ng-model="discT.encoded" ng-change="discT.read()"></textarea>
-                </label>
+    <form name="form" class="form-vertical">
+        <fieldset>
+            <legend>Админка</legend>
+            <div class="row">
+                <div class="span4">
+                    <label>
+                        Скидки
+                        <br>
+                        <textarea rows="10" validate="discT.error"
+                                  style="width: 100%; text-align: right;"
+                                  ng-model="discT.encoded" ng-change="discT.read()"></textarea>
+                    </label>
+                </div>
+                <div class="span3 text-error" ng-show="discT.error"
+                     style="white-space: pre-line">
+                    Ошибка: {{ discT.error }}</div>
             </div>
-            <div class="span3">{{ discT.tableOrError() }}</div>
-        </div>
+            <label>Курс доллара
+                <span class="input-append">
+                    <input type="text" ng-model="data.currency.rate" class="input-mini"
+                           style="text-align: right" smartfloat>
+                    <span class="add-on">р.</span>
+                </span>
+            </label>
+            <button class="btn btn-primary" ng-click="save()"
+                    ng-disabled="form.$invalid || s.busy">Сохранить</button>
+            <p ng-show="s.result=='success'" class="text-success">
+                Сохранено
+            </p>
+            <p ng-show="s.result=='failure'" class="text-failure">
+                Ошибка
+            </p>
+        </fieldset>
     </form>
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
