@@ -8,7 +8,7 @@ Array.prototype.mapSum = function(f) {
 };
 var calc = angular.module('Calc', ['ngCookies', 'ui.bootstrap', 'ngResource']);
 calc.factory('data', function($resource){
-    return $resource('options.php').get(function(){
+    return $resource('settings.php').get(function(){
         $injector.get('$rootScope').$emit('dataIsReady');
     });
 });
@@ -337,8 +337,15 @@ calc.controller('OrdersController', function($scope, $http){
         $scope.list = data;
     });
 });
-calc.controller('SettingsController', function($scope){
+calc.controller('SettingsController', function($scope, $http){
     gScope = $scope;
+    $scope.previousVersions = [];
+    $scope.loadPreviousVersions = function(){
+        $http.get('settings.php?list').success(function(data){
+            $scope.previousVersions = data;
+        });
+    };
+    $scope.loadPreviousVersions();
     $scope.data = $injector.get('data');
     $scope.pp = $injector.get('discountParserPrinter');
     $scope.discT = {
@@ -361,13 +368,22 @@ calc.controller('SettingsController', function($scope){
             function(){
                 $scope.s.busy = false;
                 $scope.s.result = "success";
+                $scope.loadPreviousVersions();
                 $scope.$apply();
             },
             function(){
                 $scope.s.busy = false;
                 $scope.s.result = "failure";
+                $scope.loadPreviousVersions();
                 $scope.$apply();
             });
+    };
+    $scope.load = function(id){
+        if (!id) return;
+        $scope.busy = true;
+        $scope.data.$get({id: id}, function(){
+            $injector.get('$rootScope').$emit('dataIsReady');
+        })
     };
     $injector.get('$rootScope').$on('dataIsReady', function(){
         $scope.discT.encoded = $scope.pp.print($scope.data.discountTable);

@@ -11,16 +11,14 @@ function e404(){
     die();
 }
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if(isset($_GET['list']))
-    {
+    if(isset($_GET['list'])) {
         include ("../includes/db.php");
-        $st = $db->prepare("SELECT id, DATE_FORMAT(time, '%d.%m.%Y %H:%i') as time FROM orders
-                            ORDER BY UNIX_TIMESTAMP(time) DESC LIMIT 50;");
+        $st = $db->prepare("SELECT id, DATE_FORMAT(time, '%d.%m.%Y %H:%i') as time
+                            FROM orders ORDER BY UNIX_TIMESTAMP(time) DESC LIMIT 50;");
         $st->execute();
         $result = $st->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($result);
-    }
-    else {
+    } else {
         $id = $_GET['id'];
         if (!is_numeric($id)) e404();
         include ("../includes/db.php");

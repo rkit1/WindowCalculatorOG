@@ -50,6 +50,19 @@
             </p>
         </fieldset>
     </form>
+    <form>
+        <fieldset>
+            <label>
+                Предыдущие версии
+                <select ng-change="load(previousVersion)" ng-model="previousVersion">
+                    <option></option>
+                    <option ng-repeat="v in previousVersions" value="{{v.id}}">
+                        {{ v.time }}
+                    </option>
+                </select>
+            </label>
+        </fieldset>
+    </form>
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-cookies.min.js"></script>
