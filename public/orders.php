@@ -1,5 +1,4 @@
 <?php
-error_reporting(E_ALL);
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, OPTIONS, POST");
 header("Access-Control-Max-Age: 1000");

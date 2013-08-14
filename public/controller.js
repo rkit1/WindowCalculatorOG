@@ -121,6 +121,18 @@ calc.factory('currency', function($rootScope, data){
     });
     return out
 });
+calc.factory('auth', function($cookies, $window){
+    return {
+        isAuthorised: $cookies.calcAuth != undefined,
+        logout: function(){
+            $cookies.calcAuth = undefined;
+            $window.location.href = "calculator.htm"
+        },
+        authorise: function(){
+            $window.location.href = "auth.htm#" + $window.location.pathname;
+        }
+    }
+});
 calc.factory('discountParserPrinter', function(){
     return {
         /**
@@ -191,6 +203,21 @@ calc.directive('smartfloat', function() {
     };
 });
 var $injector = angular.injector(['Calc']);
+calc.directive('adminnav', function(auth){
+    return {
+        priority: 0,
+        restrict: 'E',
+        scope: {},
+        controller: function($scope, $element, $attrs, $transclude) {
+            if (!auth.isAuthorised) auth.authorise();
+            $scope.logout = function(){
+                auth.logout();
+            };
+        },
+        templateUrl: 'adminNav.htm',
+        replace: true
+    };
+})
 calc.controller('CalcController', function ($scope, $location) {
     //noinspection JSUnusedGlobalSymbols
     gScope = $scope;
@@ -392,6 +419,38 @@ calc.controller('SettingsController', function($scope, $http){
         $scope.$apply();
     });
 });
+calc.controller('AuthController', function($scope, auth, $http, $window, $location){
+    $scope.redirect = function(){
+        if ($location.path() != "") $window.location.href = $location.path();
+        else $window.location.href = "orders.htm";
+    };
+    if (auth.isAuthorised) $scope.redirect();
+    $scope.s = {
+        password: "",
+        busy: false,
+        error: false,
+        wrongPass: false
+    };
+    $scope.submit = function(){
+        $scope.s.busy = true;
+        $scope.s.error = false;
+        $http.post('auth.php', {password: $scope.s.password}).success(function(data){
+            if (data.result == 'ok'){
+                $scope.redirect();
+            } else if (data.result == 'wrongPass') {
+                $scope.s.wrongPass = true;
+            } else {
+                $scope.s.error = true;
+            }
+            $scope.s.busy = false;
+            $scope.$apply;
+        }).error(function(){
+            $scope.s.error = true;
+            $scope.s.busy = false;
+            $scope.$apply;
+        });
+    }
+}); //Вставить валидацию везде
 Prices = function($scope){
     var pt = this;
     var profiles = $injector.get('profiles');

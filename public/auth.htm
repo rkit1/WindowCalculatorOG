@@ -3,18 +3,24 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <style>
+        .ng-invalid {
+            border-color: red !important;
+        }
+        .ng-invalid:focus {
+            box-shadow: 0 1px 1px rgba(0,0,0,0.075) inset, 0 0 8px rgba(255,0,0,0.6) !important;
+        }
+    </style>
     <title></title>
 </head>
 <body id="ng-app" ng-app="Calc">
-<adminnav></adminnav>
-<div class="container">
-    <div ng-controller="OrdersController">
-        <ul>
-            <li ng-repeat="item in list">
-                <a href="calculator.htm#/order/{{item.id}}">{{ item.time }} заказ №{{ item.id }}</a>
-            </li>
-        </ul>
-    </div>
+<div style="display:table; width: 100%; height: 500px;" ng-controller="AuthController">
+    <form style="display:table-cell; text-align: center; vertical-align: middle;" ng-submit="submit()">
+        <label><input type="password" required class="input-medium" ng-model="s.password"></label>
+        <button type="submit" class="btn btn-primary input-medium" ng-disabled="s.busy">Вход</button>
+        <p ng-show="s.error" class="text-error">Ошибка</p>
+        <p ng-show="s.wrongPass" class="text-error">Пароль неверен</p>
+    </form>
 </div>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
