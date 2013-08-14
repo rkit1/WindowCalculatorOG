@@ -202,7 +202,6 @@ calc.directive('smartfloat', function() {
         }
     };
 });
-var $injector = angular.injector(['Calc']);
 calc.directive('adminnav', function(auth){
     return {
         priority: 0,
@@ -217,7 +216,8 @@ calc.directive('adminnav', function(auth){
         templateUrl: 'adminNav.htm',
         replace: true
     };
-})
+});
+var $injector = angular.injector(['Calc']);
 calc.controller('CalcController', function ($scope, $location) {
     //noinspection JSUnusedGlobalSymbols
     gScope = $scope;
