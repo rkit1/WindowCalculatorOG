@@ -1,22 +1,10 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, OPTIONS, POST");
-header("Access-Control-Max-Age: 1000");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-type: application/json");
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') die();
-function e($e){
-    header(':', true, $e);
-    die();
-}
-
-include ("../includes/db.php");
-if (!isset($_COOKIE['calcAuth'])) e(403);
-$st = $db->prepare("SELECT * FROM sessions WHERE session = ?;");
-if (!$st->execute($_COOKIE['calcAuth'])) e(500);
-if (!$st->rowCount() < 1) e(403);
+include_once ("../includes/util.php");
+include_once ("../includes/db.php");
+setupJSON();
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    checkAuth($db);
     if(isset($_GET['list'])) {
         $st = $db->prepare("SELECT id, DATE_FORMAT(time, '%d.%m.%Y %H:%i') as time
                             FROM orders ORDER BY UNIX_TIMESTAMP(time) DESC LIMIT 50;");

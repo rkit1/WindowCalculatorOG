@@ -1,23 +1,16 @@
 <?php
 $password = "21312312";
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, OPTIONS, POST");
-header("Access-Control-Max-Age: 1000");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-type: application/json");
-function e($c){
-    header(':', true, $c);
-    die();
-}
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') die();
-else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+include ("../includes/util.php");
+include ("../includes/db.php");
+setupJSON();
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include ("../includes/db.php");
     $body = file_get_contents('php://input');
     $r = json_decode($body);
     if ($r && isset($r->password)) {
         /** @noinspection PhpUndefinedFieldInspection */
         if ($r->password == $password) {
-            $randomStr = uniqid('', true);
+            $randomStr = md5(uniqid('', true));
             $st = $db->prepare("INSERT INTO sessions VALUES (?);");
             if ($st->execute(array($randomStr)) && $st->rowCount() > 0) {
                 setcookie("calcAuth", $randomStr);
@@ -29,11 +22,8 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             die();
         }
     } else e(400);
-} else e(404);
-
-/*
-else if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_COOKIE['calcAuth'])) {
+} else if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['logout']) && isset($_COOKIE['calcAuth'])){
     include ("../includes/db.php");
-    $st = $db->prepare("SELECT * FROM sessions WHERE session = ?;");
-    if (!$st->execute($_COOKIE['calcAuth']) || $st->rowCount() < 1) e(404);
-}
+    $st = $db->prepare("DELETE FROM sessions WHERE session = ?;");
+    $st->execute(array($_COOKIE['calcAuth']));
+} else e(400);

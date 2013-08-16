@@ -121,12 +121,15 @@ calc.factory('currency', function($rootScope, data){
     });
     return out
 });
-calc.factory('auth', function($cookies, $window){
+calc.factory('auth', function($cookies, $window, $http){
     return {
         isAuthorised: $cookies.calcAuth != undefined,
         logout: function(){
-            $cookies.calcAuth = undefined;
-            $window.location.href = "calculator.htm"
+            var c = function(){
+                $cookies.calcAuth = undefined;
+                $window.location.href = "calculator.htm";
+            }
+            $http('auth.php?logout').success(c).error(c);
         },
         authorise: function(){
             $window.location.href = "auth.htm#" + $window.location.pathname;
