@@ -6,13 +6,13 @@ Array.prototype.mapSum = function(f) {
     });
     return out;
 };
-var calc = angular.module('Calc', ['ngCookies', 'ui.bootstrap', 'ngResource']);
+var calc = angular.module('Calc', ['ngCookies', 'ui.bootstrap', 'ngResource', 'LocalStorageModule']);
 calc.factory('data', function($resource){
     return $resource('settings.php').get(function(){
         $injector.get('$rootScope').$emit('dataIsReady');
     });
 });
-calc.factory('order', function($cookieStore, $http){
+calc.factory('order', function($cookieStore, $http, localStorageService){
     return function(){
         var o = this;
         this.init = function(){
@@ -41,16 +41,19 @@ calc.factory('order', function($cookieStore, $http){
                 this.orderForm[k] = data.orderForm[k];
         };
         this.loadFromCookies = function(){
-            if ($cookieStore.get('data')){
-                this.load($cookieStore.get('data'));
+            if (localStorageService.isSupported &&
+                localStorageService.get('data')) {
+                this.load(localStorageService.get('data'));
                 return true;
-            } else return false;
+            }
+            else return false;
         };
         this.saveToCookies = function(){
-            $cookieStore.put('data', {
-                windows: this.windows,
-                orderForm: this.orderForm
-            });
+            if (localStorageService.isSupported)
+                localStorageService.set('data', {
+                    windows: this.windows,
+                    orderForm: this.orderForm
+                });
         }
         this.loadFromDB = function(id){
             return $http ({
@@ -360,6 +363,9 @@ calc.controller('CalcController', function ($scope, $location) {
                , windows: $scope.order.windows
                , orderForm: $scope.order.orderForm };
     $scope.prices = new Prices($scope.s.windows);
+    $scope.$watch('s.currentWindow', function(){
+        $scope.save();
+    });
 });
 calc.controller('OrdersController', function($scope, $http){
     $http.get('orders.php?list').success(function(data){
@@ -452,7 +458,7 @@ calc.controller('AuthController', function($scope, auth, $http, $window, $locati
             $scope.$apply;
         });
     }
-}); //Вставить валидацию везде
+});
 Prices = function(ws){
     var pt = this;
     var ft = new FullTable(ws);
@@ -463,7 +469,6 @@ Prices = function(ws){
         });
     };
     this.total = function(){
-        //$scope.save();
         return pt.totalWindows() + pt.otkosyTotal() + pt.netTotal()
              + pt.podokonnikTotal() + pt.otlivTotal()
              + pt.montageTotal() - pt.discount();
