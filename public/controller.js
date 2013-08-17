@@ -359,8 +359,7 @@ calc.controller('CalcController', function ($scope, $location) {
                , currentWindow: $scope.order.windows[0]
                , windows: $scope.order.windows
                , orderForm: $scope.order.orderForm };
-    $scope.fullTable = new FullTable($scope);
-    $scope.prices = new Prices($scope);
+    $scope.prices = new Prices($scope.s.windows);
 });
 calc.controller('OrdersController', function($scope, $http){
     $http.get('orders.php?list').success(function(data){
@@ -454,11 +453,10 @@ calc.controller('AuthController', function($scope, auth, $http, $window, $locati
         });
     }
 }); //Вставить валидацию везде
-Prices = function($scope){
+Prices = function(ws){
     var pt = this;
+    var ft = new FullTable(ws);
     var profiles = $injector.get('profiles');
-    var ws = $scope.s.windows;
-
     this.totalWindows = function(){
         return ws.mapSum(function(w){
             return pt.product(w) * w.quantity;
@@ -471,10 +469,10 @@ Prices = function($scope){
              + pt.montageTotal() - pt.discount();
     };
     this.discount = function(){
-        return $scope.fullTable.discount();
+        return ft.discount();
     };
     this.podokonnik = function(w){
-        return $scope.fullTable.podokonnikPrice(w);
+        return ft.podokonnikPrice(w);
     };
     this.podokonnikTotal = function(){
         return ws.mapSum(function(w){
@@ -482,7 +480,7 @@ Prices = function($scope){
         });
     };
     this.otliv = function(w){
-        return $scope.fullTable.otlivPrice(w);
+        return ft.otlivPrice(w);
     };
     this.otlivTotal = function(){
         return ws.mapSum(function(w){
@@ -490,7 +488,7 @@ Prices = function($scope){
         });
     };
     this.montage = function(w){
-        return $scope.fullTable.montagePrice(w);
+        return ft.montagePrice(w);
     };
     this.montageTotal = function(){
         return ws.mapSum(function(w){
@@ -504,7 +502,7 @@ Prices = function($scope){
         return (w.getTable().r23() * (profiles[w.profile].priceCoefficient / 100) + this.podoProfili(w)) * 1.3;
     };
     this.otkosy = function(w){
-        return $scope.fullTable.otkosyPrice(w);
+        return ft.otkosyPrice(w);
     };
     this.otkosyTotal = function(){
         var out = 0;
@@ -522,7 +520,7 @@ Prices = function($scope){
         return out;
     };
     this.net = function(w){
-        return $scope.fullTable.netPrice(w)
+        return ft.netPrice(w)
     };
     this.netTotal = function(){
         return ws.mapSum(function(w){
@@ -530,7 +528,7 @@ Prices = function($scope){
         });
     };
     this.delivery = function(){
-        return $scope.fullTable.c66();
+        return ft.c66();
     };
 };
 
@@ -849,8 +847,7 @@ PerWindowTable = function(w){
 
     return this;
 };
-FullTable = function($scope){
-    var ws = $scope.s.windows;
+FullTable = function(ws){
     var discount = $injector.get('discount');
     var ft = this;
     //noinspection JSUnusedGlobalSymbols
