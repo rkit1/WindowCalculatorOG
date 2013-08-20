@@ -1,8 +1,28 @@
 <?php
-include_once ("../includes/util.php");
-include_once ("../includes/db.php");
+include_once "../includes/util.php";
+include_once "../includes/db.php";
+require_once '../vendor/autoload.php';
 setupJSON();
 
+function sendMessage($orderId){
+    $mail = new PHPMailer;
+    $to = 'me@rkit.pp.ru';
+    $from = 'me@rkit.pp.ru';
+    $calcRoot = '';
+
+    $mail->From = $from;
+    $mail->FromName = 'Mailer';
+    $mail->AddAddress($to);
+
+    $mail->WordWrap = 50;
+    $mail->IsHTML(true);
+
+    $mail->Subject = 'Новый заказ';
+    $mail->Body    = "Принят заказ №<a href=\"\">{$orderId}</a>";
+    $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+    return $mail->Send();
+};
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     checkAuth($db);
     if(isset($_GET['list'])) {
