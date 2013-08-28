@@ -347,7 +347,7 @@
                         <h4>Скидка: -{{prices.discount() | rub}}</h4>
                         <h3>Общая сумма: {{prices.total() | rub}}</h3>
                         <button class="btn btn-large btn-primary" style="width: 100%;"
-                                ng-click="s.state = 'order'">Заказ</button>
+                                ng-click="s.state = 'order'" ng-hide="readOnly == true">Заказ</button>
                     </div>
                     <div class="text-error" ng-show="hasErrors()">
                         Для рассчета исправьте ошибки.
@@ -357,7 +357,7 @@
         </div>
     </div>
 
-    <div ng-show="s.state == 'order'">
+    <div ng-show="s.state == 'order' || readOnly == true">
         <form class="form-horizontal" name="orderForm">
             <fieldset>
                 <legend>Заказ</legend>
@@ -415,9 +415,11 @@
 
             </fieldset>
         </form>
-        <button class="btn btn-primary" ng-disabled="s.busy || readOnly || orderForm.$invalid" ng-click="sendOrder()">Заказ</button>
-        <button class="btn btn-warning cancel" ng-disabled="s.busy" ng-click="s.state = 'form'"
-                >Отмена</button>
+        <div ng-hide='readOnly == true'>
+            <button class="btn btn-primary" ng-disabled="s.busy || readOnly || orderForm.$invalid" ng-click="sendOrder()">Заказ</button>
+            <button class="btn btn-warning cancel" ng-disabled="s.busy" ng-click="s.state = 'form'"
+                    >Отмена</button>
+        </div>
     </div>
 
     <div ng-show="s.state == 'orderSuccess'">
